@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <!-- learning by https://www.youtube.com/watch?v=eow125xV5-c  -->
+        <style>
+            .my-row-style {
+                background-color: bisque;
+                height: 400px;
+            }
+        </style>
+            <div class="row"><div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="p-3 border bg-light">
+                    <h1>Hello World!</h1>
+                </div></div>
+            </div>
+            <div class="row">
+                <!-- The class col-sm-12 defines the amount of space in the page -->
+                <!-- sm: small screens (mobile), md: middle screens (table), lg: large screens -->
+                <div class="col-sm-12 col-md-6 col-lg-2">Column 1</div>
+                <div class="col-sm-12 col-md-6 col-lg-10">Column 2</div>
+            </div>
+
+            <div class="row">
+                <!-- The class col-sm-12 defines the amount of space in the page -->
+                <!-- sm: small screens (mobile), md: middle screens (table), lg: large screens -->
+
+                <!-- p-3 seems to be for padding, with border and some color -->
+                <div class="col-sm-4 offset-2"><div class="p-3 border bg-light">Column 1</div></div>
+                <div class="col-sm-4 offset-2"><div class="p-3 border bg-light">Column 1</div></div>
+            </div>
+
+            <!-- hot to center stuff -->
+            <div class="row my-row-style justify-content-center align-items-center">
+                <div class="col-sm-6"><div class="p-3 border bg-light">Column 1</div></div>
+                <div class="col-sm-6"><div class="p-3 border bg-light">Column 1</div></div>
+            </div>
+        </div>
+{% endblock %}
