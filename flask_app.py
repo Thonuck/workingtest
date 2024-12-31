@@ -23,4 +23,4 @@ def helpers():
 
 @app.route('/about')
 def about():
-    return render_template("about.html", title="Aufgaben")
+    return render_template("index_boot.html", title="Aufgaben")

@@ -1,0 +1,9 @@
+body {
+    background-color: #333;
+}
+
+.part2 img{
+    height:100vh;
+    width: 60%;
+    margin-left: 20%;
+}
