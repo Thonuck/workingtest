@@ -1,0 +1,79 @@
+body {
+    background-color: #333;
+}
+
+.part2 img{
+    height:100vh;
+    width: 60%;
+    margin-left: 20%;
+}
+header {
+    height: 100vh;
+    background-color: #2c2d30;
+    box-shadow: -2px -2px 3px rgba(83,83,83,0.4), 2px 2px 3px rgba(0,0,0,0.35);
+    width: 80px;
+    color: #ffb55a;
+    border-radius: 0 1.25rem 1.25rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+.navbar-brand {
+    color: #ffb55a;
+    text-align: center;
+    font-size: 30px;
+    margin: 0;
+    width: 100%;
+}
+.navbar-brand span {
+    opacity: 0.7;
+    font-size: 12px;
+}
+.navbar-brand:hover {
+    color: #ffb55a;
+}
+.menu-items {
+    margin: 80px 0 0 0;
+    padding: 0;
+}
+.menu-item {
+    list-style-type: none;
+    background-color: transparent;
+    border: none;
+    margin: 10px;
+}
+.menu-item a {
+    color: #ffb55a;
+    height: 60px;
+    width: 60px;
+    display: block;
+    border-radius: 1rem;
+    box-shadow: 3px 3px 3px #202125, -3px -3px 3px #3e3e3e;
+    text-decoration: none;
+    text-align: center;
+    padding: 22px 0;
+    transition: all 0.3s ease;
+}
+.menu-item a i {
+    font-weight: bold;
+    display: inline-block;
+    margin: auto;
+}
+.menu-item a span {
+    opacity: 0.7;
+    font-size: 12px;
+    display: none;
+}
+.menu-item a:hover, .menu-item a.active span{
+    box-shadow: 3px 3px 3px #202125, inset -3px -3px 3px #3e3e3e;
+    padding: 12px;
+}
+.menu-item a:hover span, .menu-item a.active span{
+    display: block;
+}
+.part1 {
+    color: #fff;
+    height: 100%;
+    margin: auto;
+}
