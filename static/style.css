@@ -34,7 +34,7 @@ header {
     color: #ffb55a;
 }
 .menu-items {
-    margin: 80px 0 0 0;
+    margin: 70px 0 0 0;
     padding: 0;
 }
 .menu-item {
@@ -65,7 +65,7 @@ header {
     font-size: 12px;
     display: none;
 }
-.menu-item a:hover, .menu-item a.active span{
+.menu-item a:hover, .menu-item a.active {
     box-shadow: 3px 3px 3px #202125, inset -3px -3px 3px #3e3e3e;
     padding: 12px;
 }
@@ -76,4 +76,48 @@ header {
     color: #fff;
     height: 100%;
     margin: auto;
+}
+.my_name, .my_desc, .more-desc, .social-icons {
+    padding: 15px
+}
+.social-icons i{
+    padding: 0 15px;
+}
+.my_name{
+    color: #ffb55a;
+}
+.my_desc, .more_desc {
+    opacity: 0.7;
+}
+.social-icons i:hover {
+    color: #ffb55a;
+    cursor: pointer;
+}
+@media only screen and(max-width:600px){
+    header, .header-navbar {
+        height: 100px;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .navbar-brand{
+        width: 50px;
+    }
+    .menu-items{
+        display: flex;
+        margin: 10px 0 0 0;
+        justify-content:flex-end;
+        flex-grow: 2;
+    }
+    .menu-items a{
+        width: 40px;
+        height: 40px;
+        padding: 12px 0;
+    }
+    .menu-items a span {
+        font-size: 8px;
+    }
+    .menu-item a:hover, .menu-item a.active {
+        padding: 7px;
+    }
 }
