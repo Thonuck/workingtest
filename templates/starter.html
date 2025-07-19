@@ -2,7 +2,38 @@
 {% block content %}
         <div class="row"><div class="col-sm-12 col-md-12 col-lg-12">
             <div class="p-3 border bg-light">
-                <h1>Starter</h1>
+            <div class="text-center">
+                <h1 class="text-center">Teilnehmer</h1>
             </div></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="p-3 border bg-light">
+                    <table>
+                        <tr>
+                            <th>Vorname</th>
+                            <th>Nachname</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="first_name_01" required></td>
+                            <td><input type="text" name="last_name_01" required></td>
+                            <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Löschen</button></td>
+                        </tr>
+                    </table>
+                    <button type="button" class="btn btn-secondary" onclick="addHelper()">Teilnehmer Hinzufügen</button>
+                    <!-- the add helper function will add new row and increase the trailing number of tester -->
+                    <script>
+                         function addHelper() {
+                             var table = document.querySelector('table');
+                             var rowCount = table.rows.length;
+                             var row = table.insertRow(rowCount);
+                             row.innerHTML = '<td><input type="text" name="tester_first_name_' + (rowCount + 1) + '" required></td>' +
+                                             '<td><input type="text" name="tester_last_name_' + (rowCount + 1) + '" required></td>' +
+                                             '<td><button type="button" class="btn btn-danger" onclick="this.closest(\'tr\').remove()">Remove</button></td>';
+                         }
+                     </script>
+                </div>
+            </div>
         </div>
 {% endblock %}

@@ -2,28 +2,88 @@
 {% block content %}
         <div class="row"><div class="col-sm-12 col-md-12 col-lg-12">
             <div class="p-3 border bg-light">
-                <h1>Create a new Working Test</h1>
+                <h1 class="text-center">Neuen Workingtest erstellen</h1>
             </div></div>
         </div>
 
         <form action="#" method="post">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="p-3 border bg-light">
+                    <h2>Sonderleitung</h2>    
 
-            <h2>Sonderleitung</h2>    
-
-                <div class="form-group">
-                    <label for="special_lead">Sonderleitung</label>
-                    <input type="text" class="form-control" id="special_lead" name="special_lead" required>
+                    <div class="form-group">
+                        <label for="special_lead">Sonderleitung</label>
+                        <input type="text" class="form-control" id="special_lead" name="special_lead" required>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-            <h2>Helfer</h2>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="p-3 border bg-light">
+                    <h2>Prüfer</h2>
+                    <table>
+                        <tr>
+                            <th>Vorname</th>
+                            <th>Nachname</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="tester_first_name_01" required></td>
+                            <td><input type="text" name="tester_last_name_01" required></td>
+                            <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Löschen</button></td>
+                        </tr>
+                    </table>
+                    <button type="button" class="btn btn-secondary" onclick="addHelper()">Prüfer Hinzufügen</button>
+                    <!-- the add helper function will add new row and increase the trailing number of tester -->
+                    <script>
+                         function addHelper() {
+                             var table = document.querySelector('table');
+                             var rowCount = table.rows.length;
+                             var row = table.insertRow(rowCount);
+                             row.innerHTML = '<td><input type="text" name="tester_first_name_' + (rowCount + 1) + '" required></td>' +
+                                             '<td><input type="text" name="tester_last_name_' + (rowCount + 1) + '" required></td>' +
+                                             '<td><button type="button" class="btn btn-danger" onclick="this.closest(\'tr\').remove()">Remove</button></td>';
+                         }
+                     </script>
+                </div>
+            </div>
+        </div>
 
-            <h2>Prüfer</h2>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="p-3 border bg-light">
+                    <h2>Helfer</h2>
+                       <table>
+                         <tr>
+                            <th>Vorname</th>
+                            <th>Nachname</th>
+                            <th>Rolle</th>
+                            <th>Aktion</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="helper_first_name" required></td>
+                            <td><input type="text" name="helper_last_name" required></td>
+                            <td><input type="text" name="helper_role" required></td>
+                            <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">Löschen</button></td>
+                        </tr>
+                        </table>
 
-            <h2>Aufgaben</h2>
-
-            <h2>Prüfungsdatum</h2>
-
-            <h2>Teilnehmer</h2>
+                        <button type="button" class="btn btn-secondary" onclick="addHelper()">Helfer hinzufügen</button>
+                        <script>
+                            function addHelper() {
+                                var table = document.querySelector('table');
+                                var row = table.insertRow();
+                                row.innerHTML = '<td><input type="text" name="helper_first_name" required></td>' +
+                                                '<td><input type="text" name="helper_last_name" required></td>' +
+                                                '<td><input type="text" name="helper_role" required></td>' +
+                                                '<td><button type="button" class="btn btn-danger" onclick="this.closest(\'tr\').remove()">Remove</button></td>';
+                            }
+                        </script>
+                </div>
+            </div>
+        </div>
 
         <button type="submit" class="btn btn-primary">Submit</button> 
         
