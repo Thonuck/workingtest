@@ -24,3 +24,7 @@ def helpers():
 @app.route('/about')
 def about():
     return render_template("index_boot.html", title="Aufgaben")
+
+@app.route('/new_working_test')
+def new_working_test():
+    return render_template("new_working_test.html", title="Neuer Working Test")
