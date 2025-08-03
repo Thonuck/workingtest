@@ -1,43 +1,37 @@
-
 # A very simple Flask Hello World app for you to get started with...
 
 from flask import Flask, render_template, request, redirect, url_for
-from database import Starter, Base, create_engine
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import sessionmaker
+from models import db
+from blueprints.main import main_bp
+from blueprints.organizer import organizer_bp
+from blueprints.helper import helper_bp
+from blueprints.main.routes import hello_world, starter  # Import moved routes
+from config import Config
+from extensions import init_extensions
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///workingtest.db'  # Adjust the database URL as needed
-db = SQLAlchemy(model_class=Base)
-db.init_app(app)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    # Initialize extensions
+    init_extensions(app)
+
+    # Register blueprints
+    app.register_blueprint(main_bp)
+    app.register_blueprint(organizer_bp, url_prefix='/organizer')
+    app.register_blueprint(helper_bp, url_prefix='/helper')
+
+    return app
+
+app = create_app()
 
 @app.route('/')
 def hello_world():
-    return render_template("index.html", title="Workingtest Planer")
+    return hello_world()
 
 @app.route('/starter', methods=['GET', 'POST'])
 def starter():
-    """
-    Starter page for the Workingtest Planner application.
-    """
-    # If you want to handle POST requests, you can add logic here.
-
-    if request.method == 'POST':
-        # Handle form submission or other POST logic here
-        print("post")
-        return render_template("starter.html", title="Starter")
-    # read all starters from the database
-    # and pass them to the template
-    engine = create_engine('sqlite:///starters.db')
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    starters = session.query(Starter).all()
-    session.close()
-    # Pass the starters to the template
-    print(starters)
-    return render_template("starter.html", title="Starter", starters=starters)
-    return render_template("starter.html", title="Starter")
+    return starter()
 
 @app.route('/tasks')
 def tasks():
@@ -103,3 +97,6 @@ def starter_details():
         # return render_template("starter.html", title="Starter Details")
 
     return render_template("starter_details.html", title="Starter Details")
+
+if __name__ == '__main__':
+    app.run(debug=True)
