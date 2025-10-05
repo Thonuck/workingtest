@@ -9,6 +9,12 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False)  # guest, organizer, helper
 
+class Person(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    given_name = db.Column(db.String(100), nullable=False)
+    family_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=True)
+
 # Competition model
 class Competition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,12 +32,13 @@ class Dog(db.Model):
 
 # Starter model
 class Starter(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    dog_id = db.Column(db.Integer, db.ForeignKey('dog.id'), nullable=False)
-    competition_id = db.Column(db.Integer, db.ForeignKey('competition.id'), nullable=False)
-    paid = db.Column(db.Boolean, default=False)
-    present = db.Column(db.Boolean, default=False)
+    id: int = db.Column(db.Integer, primary_key=True)
+    person_id: int = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
+    dog_id: int = db.Column(db.Integer, db.ForeignKey('dog.id'), nullable=False)
+    competition_id: int = db.Column(db.Integer, db.ForeignKey('competition.id'), nullable=False)
+    paid: bool = db.Column(db.Boolean, default=False)
+    present: bool = db.Column(db.Boolean, default=False)
+    notes: str = db.Column(db.Text, nullable=True)
 
 # Exercise model
 class Exercise(db.Model):

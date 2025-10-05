@@ -1,15 +1,15 @@
 # A very simple Flask Hello World app for you to get started with...
 
-from flask import Flask, render_template, request, redirect, url_for
-from models import db
+from flask import Flask
 from blueprints.main.routes import main_bp
 from blueprints.organizer.routes import organizer_bp
 from blueprints.helper.routes import helper_bp
 from config import Config
 from extensions import init_extensions
+from models import db
 
-def create_app():
-    app = Flask(__name__)
+def create_app() -> Flask:
+    app: Flask = Flask(__name__)
     app.config.from_object(Config)
 
     # Initialize extensions
@@ -22,9 +22,7 @@ def create_app():
 
     return app
 
-app = create_app()
-
-
 
 if __name__ == '__main__':
+    app: Flask = create_app()
     app.run(debug=True)
