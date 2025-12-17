@@ -5,7 +5,6 @@ from blueprints.main.routes import main_bp
 from blueprints.organizer.routes import organizer_bp
 from blueprints.helper.routes import helper_bp
 from config import Config
-from extensions import init_extensions
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -59,9 +58,9 @@ class Exercise(db.Model):
 def create_app() -> Flask:
     app: Flask = Flask(__name__)
     app.config.from_object(Config)
-
-    # Initialize extensions
-    init_extensions(app)
+    
+    db.init_app(app)
+    migrate.init_app(app, db)
 
     # Register blueprints
     app.register_blueprint(main_bp)
