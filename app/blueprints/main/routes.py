@@ -6,7 +6,7 @@ from app.models import Competition
 @bp.route('/')
 def index():
     Competition.query.all()
-    return render_template('main/index.html')
+    return render_template('index.html')
 
 
 @bp.route('/new_working_test', methods=['GET', 'POST'])
