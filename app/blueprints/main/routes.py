@@ -6,6 +6,7 @@ from app.models import Competition
 @bp.route('/')
 def index():
     Competition.query.all()
+    print("Hello Visitor!")
     return render_template('index.html')
 
 
