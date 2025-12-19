@@ -28,14 +28,15 @@ def new_working_test():
             return render_template("new_working_test.html", title="Neuer Working Test", error="Wettbewerb existiert bereits.")
 
         new_competition = Competition(name=competition_details["name"],
-                                                   level=competition_details["class"],
-                                                   location=competition_details["location"],
-                                                   date=competition_details["date"])
+                                      level=competition_details["class"],
+                                      location=competition_details["location"],
+                                      date=competition_details["date"])
+
         db.session.add(new_competition)
         db.session.commit()
 
         # return render_template("index.html")
-        return redirect(url_for('main.main_index'))
+        return redirect(url_for('main.index'))
  
     return render_template("new_working_test.html", title="Neuer Working Test")
 
