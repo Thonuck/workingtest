@@ -1,3 +1,4 @@
 flask
 flask-alchemy
 flask-migrate
+flask-login
