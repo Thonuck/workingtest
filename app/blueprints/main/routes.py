@@ -5,9 +5,10 @@ from app.models import Competition
 
 @bp.route('/')
 def index():
-    Competition.query.all()
-    print("Hello Visitor!")
-    return render_template('index.html')
+    # Competition.query.all()
+    # print("Hello Visitor!")
+    # return render_template('index.html')
+    return render_template('debug.html')
 
 
 @bp.route('/new_working_test', methods=['GET', 'POST'])
