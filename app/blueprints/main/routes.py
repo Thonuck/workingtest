@@ -1,5 +1,5 @@
 from flask import render_template, jsonify, request, redirect, url_for
-from app.blueprints.users import bp
+from app.blueprints.main import bp
 from app import db
 from app.models import Competition
 
