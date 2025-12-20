@@ -108,6 +108,17 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
 from app.models import User
 
+
+def roles_required(roles):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not current_user.is_authenticated or current_user.role not in roles:
+                abort(403)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
