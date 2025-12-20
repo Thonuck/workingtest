@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request, abort
+from flask import render_template, redirect, url_for, flash, request, abort, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app.blueprints.users import bp
@@ -95,20 +95,6 @@ def delete_user(user_id):
     db.session.commit()
     return redirect(url_for('users.list_users'))
 
-<<<<<<< HEAD
-@bp.route('/<int:user_id>/detail')
-def detail(user_id):
-    user = User.query.get_or_404(user_id)
-    return render_template('detail.html', user=user)
-=======
-
-# Proposed from claude:
-from flask import render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user
-from app import app, db
-from app.models import User
-
-
 def roles_required(roles):
     def decorator(func):
         @wraps(func)
@@ -119,7 +105,22 @@ def roles_required(roles):
         return wrapper
     return decorator
 
-@app.route('/register', methods=['GET', 'POST'])
+@bp.route('/set-role/<int:user_id>/<role>')
+@roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
+def set_user_role(user_id, role):
+    user = User.query.get(user_id)
+    if not user:
+        return "Benutzer nicht gefunden", 404
+    
+    # Rolle setzen
+    if role not in ['guest', 'helper', 'organizer', 'admin']:
+        return "Ungültige Rolle", 400  # Eingabeprüfung für die Rolle
+
+    user.role = role
+    db.session.commit()
+    return f"Die Rolle von {user.username} wurde auf {role} gesetzt."
+
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -128,6 +129,7 @@ def register():
             flash('Benutzername existiert bereits.')
             return redirect(url_for('register'))
         new_user = User(username=username)
+        # new_user.role = 'guest'
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -135,7 +137,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -148,15 +150,39 @@ def login():
         flash('Ungültiger Benutzername oder Passwort.')
     return render_template('login.html')
 
-@app.route('/logout')
+@bp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Du wurdest ausgeloggt.')
     return redirect(url_for('login'))
 
-@app.route('/dashboard')
+@bp.route('/dashboard')
 @login_required
 def dashboard():
     return f'Willkommen {current_user.username}!'
->>>>>>> a5bc9f5 (add further proposals from claude)
+
+@bp.route('/')
+def list_users():
+    users = User.query.all()
+    return render_template('users/list.html', users=users)
+
+@bp.route('/<int:user_id>/edit', methods=['GET', 'POST'])
+@roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        user.username = request.form['username']
+        db.session.commit()
+        return redirect(url_for('users.user_detail', user_id=user.id))
+    
+    return render_template('users/edit.html', user=user)
+
+@bp.route('/<int:user_id>/delete', methods=['POST'])
+@roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('users.list_users'))
