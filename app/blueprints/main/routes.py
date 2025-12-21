@@ -11,6 +11,11 @@ def index():
     return render_template('index.html')
 
 
+@bp.route('/about')
+def about():
+    return render_template("about.html")
+
+
 @bp.route('/new_working_test', methods=['GET', 'POST'])
 def new_working_test():
     if request.method == 'POST':
@@ -41,8 +46,3 @@ def new_working_test():
         return redirect(url_for('main.index'))
  
     return render_template("new_working_test.html", title="Neuer Working Test")
-
-
-@bp.route('/about')
-def about():
-    return render_tamplate("about.html")
