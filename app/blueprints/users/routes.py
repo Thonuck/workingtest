@@ -165,7 +165,7 @@ def dashboard():
 @bp.route('/')
 def list_users():
     users = User.query.all()
-    return render_template('users/list.html', users=users)
+    return render_template('list.html', users=users)
 
 @bp.route('/<int:user_id>/edit', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -177,7 +177,7 @@ def edit_user(user_id):
         db.session.commit()
         return redirect(url_for('users.user_detail', user_id=user.id))
     
-    return render_template('users/edit.html', user=user)
+    return render_template('edit.html', user=user)
 
 @bp.route('/<int:user_id>/delete', methods=['POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden

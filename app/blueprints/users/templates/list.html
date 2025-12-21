@@ -10,7 +10,7 @@
     <ul class="list-group mt-3">
         {% for user in users %}
         <li class="list-group-item">
-            <a href="#">
+            <a href="{{ url_for('users.detail', user_id=user.id) }}">
                 {{ user.username }}
             </a>
             ({{ user.role }})
