@@ -5,12 +5,12 @@
 {% block content %}
 <div class="container">
     <h1>Users</h1>
-    <a href="{{ url_for('users.create_user') }}" class="btn btn-primary">Create User</a>
+    <a href="{{ url_for('users.register') }}" class="btn btn-primary">Create User</a>
     
     <ul class="list-group mt-3">
         {% for user in users %}
         <li class="list-group-item">
-            <a href="{{ url_for('users.user_detail', user_id=user.id) }}">
+            <a href="{{ url_for('users.detail', user_id=user.id) }}">
                 {{ user.username }}
             </a>
             <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-sm btn-secondary">Edit</a>
