@@ -42,3 +42,7 @@ def new_working_test():
  
     return render_template("new_working_test.html", title="Neuer Working Test")
 
+
+@bp.route('/about')
+def about():
+    return render_tamplate("about.html")
