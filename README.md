@@ -5,6 +5,120 @@ The main screen shows an overview of all competitions:
 
 | Competition | Degree | Location | Date |
 
+---
+
+## Frontend Development Guidelines
+
+### Responsive Design Best Practices
+
+**⚠️ WICHTIG: Alle HTML-Templates MÜSSEN für PC, Tablet und Handy optimiert sein!**
+
+#### Warum Responsive Design?
+- **Nutzerfreundlichkeit**: Viele Nutzer greifen mobil auf die Anwendung zu
+- **Professionelles Erscheinungsbild**: Mobile-First ist heute Standard
+- **Bessere Wartbarkeit**: Einheitliche Darstellung auf allen Geräten
+
+#### Implementierte Responsive Features:
+
+##### 1. **Tabellen (z.B. Competition-Übersicht)**
+```html
+<!-- FALSCH - nicht responsive -->
+<table>...</table>
+
+<!-- RICHTIG - responsive -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">...</table>
+</div>
+```
+**Warum?** Tabellen werden auf kleinen Bildschirmen horizontal scrollbar und brechen nicht das Layout.
+
+**Zusätzlich**: Spalten können auf Handy ausgeblendet werden:
+```html
+<th class="d-none d-md-table-cell">Date</th>  <!-- Nur ab Tablet sichtbar -->
+```
+
+##### 2. **Bootstrap Grid System**
+```html
+<!-- FALSCH - funktioniert nur auf Desktop -->
+<div class="col-md-6 offset-md-3">
+
+<!-- RICHTIG - funktioniert auf allen Geräten -->
+<div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+```
+
+**Breakpoints:**
+- `col-12`: Handy (100% Breite)
+- `col-sm-10`: Kleine Tablets (83% Breite)
+- `col-md-8`: Tablets (66% Breite)
+- `col-lg-6`: Desktop (50% Breite)
+
+**Warum?** Formulare sind auf Handys zu schmal und schwer bedienbar ohne diese Anpassungen.
+
+##### 3. **Navigation**
+- Verwendet `flex-wrap` für automatisches Umbrechen auf kleinen Bildschirmen
+- Navigation stapelt sich vertikal auf Handys (siehe `custom.css`)
+
+##### 4. **Viewport Meta-Tag** (PFLICHT!)
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+```
+**Warum?** Ohne diesen Tag wird die Seite auf mobilen Geräten falsch skaliert!
+
+### Zentrale CSS-Verwaltung
+
+**Datei: `/app/static/custom.css`**
+
+Alle projektspezifischen Styles MÜSSEN in dieser zentralen Datei definiert werden:
+
+**Warum zentrale CSS-Datei?**
+- ✅ **Konsistenz**: Alle Seiten haben dasselbe Look & Feel
+- ✅ **Wartbarkeit**: Änderungen nur an einer Stelle
+- ✅ **Performance**: CSS wird gecacht vom Browser
+- ✅ **Übersichtlichkeit**: Keine inline-styles in HTML-Templates
+
+**Einbindung in base.html:**
+```html
+<link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+```
+
+**Inhalt von custom.css:**
+- Responsive Media Queries für alle Breakpoints
+- Mobile-First CSS-Regeln
+- Konsistente Button- und Form-Styles
+- Tabellen-Optimierungen
+
+### Template-Struktur
+
+**Datei: `/app/templates/base.html`**
+
+**Alle HTML-Templates MÜSSEN `base.html` erweitern!**
+
+```html
+{% extends "base.html" %}
+{% block content %}
+    <!-- Ihr Inhalt -->
+{% endblock %}
+```
+
+**Warum?**
+- ✅ Navigation ist überall konsistent
+- ✅ Login/Logout-Status wird automatisch angezeigt
+- ✅ Bootstrap und custom.css sind überall verfügbar
+- ✅ Änderungen an der Navigation müssen nur einmal gemacht werden
+
+**❌ NICHT:** Separate base.html in jedem Blueprint-Ordner erstellen!
+
+### Checkliste für neue HTML-Templates:
+
+- [ ] `{% extends "base.html" %}` am Anfang
+- [ ] Bootstrap Grid System verwenden (`row`, `col-*`)
+- [ ] Tabellen in `<div class="table-responsive">` wrappen
+- [ ] Responsive Breakpoints definieren (col-12, col-sm-, col-md-, col-lg-)
+- [ ] Styles in `custom.css` definieren, nicht inline
+- [ ] Auf Handy, Tablet und Desktop testen
+
+---
+
 ### Competition Degrees
 There are three degrees for dog competitions:
 - **A (Beginner)**: For new participants.
