@@ -40,12 +40,15 @@ def create_app(config=None):
         try:
             existing_user = models.User.query.filter_by(username="admin").first()
 
-        if existing_user:
-            print("User existiert bereits!")
-        else:
-            admin_user = models.User(username="admin", role="admin")
-            admin_user.set_password("admin")
-            db.session.add(admin_user)
-            db.session.commit()
+            if existing_user:
+                print("User existiert bereits!")
+            else:
+                admin_user = models.User(username="admin", role="admin")
+                admin_user.set_password("admin")
+                db.session.add(admin_user)
+                db.session.commit()
+        except Exception as e:
+            print(f"Hinweis: Admin-User konnte nicht erstellt werden: {e}")
+            print("Falls Schema-Fehler: Bitte reset_database.py ausführen")
     
     return app
