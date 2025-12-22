@@ -21,6 +21,7 @@ def create_app():
         login_manager.login_view = 'login'
 
         from app import models
+
         @login_manager.user_loader
         def load_user(user_id):
             return models.User.query.get(int(user_id))
@@ -37,7 +38,7 @@ def create_app():
         if existing_user:
             print("User existiert bereits!")
         else:
-            admin_user = models.User(username="admin", rolle="admin")
+            admin_user = models.User(username="admin", role="admin")
             admin_user.set_password("admin")
             db.session.add(admin_user)
             db.session.commit()
