@@ -7,6 +7,59 @@ The main screen shows an overview of all competitions:
 
 ---
 
+## Installation und Setup
+
+### Erste Installation
+
+1. **Abhängigkeiten installieren:**
+```bash
+pip install -r requirements.txt
+```
+
+2. **Datenbank initialisieren:**
+```bash
+python reset_database.py
+```
+
+Dies erstellt die Datenbank mit dem aktuellen Schema und einem Admin-User:
+- **Username:** admin
+- **Password:** admin
+
+3. **Anwendung starten:**
+```bash
+python run.py
+```
+
+Die Anwendung ist dann unter `http://127.0.0.1:5000` erreichbar.
+
+### Fehlerbehebung: Database Schema Fehler
+
+**Problem:** `sqlalchemy.exc.OperationalError: no such column: user.password_hash`
+
+**Ursache:** Die Datenbank verwendet ein altes Schema, das nicht mit dem aktuellen Code kompatibel ist.
+
+**Lösung 1 (Empfohlen für Entwicklung):**
+```bash
+python reset_database.py
+```
+⚠️ **WARNUNG:** Löscht alle Daten!
+
+**Lösung 2 (Manuell):**
+```bash
+# Alte Datenbank löschen
+rm instance/database.db
+
+# Anwendung neu starten (erstellt automatisch neue Datenbank)
+python run.py
+```
+
+**Lösung 3 (Für Produktion mit Datenerhalt):**
+Falls Produktionsdaten erhalten bleiben müssen, kontaktieren Sie den Projektbetreuer für eine Migrations-Strategie.
+
+**Best Practice:** Verwenden Sie Flask-Migrate für zukünftige Schema-Änderungen!
+
+---
+
 ## Frontend Development Guidelines
 
 ### Responsive Design Best Practices
