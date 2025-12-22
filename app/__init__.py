@@ -32,7 +32,7 @@ def create_app():
         
         db.create_all()
 
-        existing_user = models.User.query.filter_by(name="admin").first()
+        existing_user = models.User.query.filter_by(username="admin").first()
 
         if existing_user:
             print("User existiert bereits!")
