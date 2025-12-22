@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager
 
 # 1. db-Instanz erstellen (ohne App)
