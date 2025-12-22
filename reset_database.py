@@ -2,7 +2,7 @@
 """
 Database Reset Script
 
-Dieses Script löscht die bestehende Datenbank und erstellt sie neu mit dem aktuellen Schema.
+Dieses Script löscht die bestehende Datenbank komplett und erstellt sie neu mit dem aktuellen Schema.
 ACHTUNG: Alle Daten gehen verloren!
 
 Verwendung:
@@ -10,24 +10,30 @@ Verwendung:
 """
 
 import os
+import shutil
 from app import create_app, db
 from app.models import User
 
 def reset_database():
     """Löscht und erstellt die Datenbank neu."""
     
-    # Pfad zur Datenbank-Datei
-    db_path = 'instance/database.db'
+    # Pfad zum instance-Verzeichnis (enthält die Datenbank)
+    instance_path = 'instance'
     
-    # Lösche alte Datenbank wenn sie existiert - BEVOR create_app aufgerufen wird!
-    if os.path.exists(db_path):
-        print(f"🗑️  Lösche alte Datenbank: {db_path}")
-        os.remove(db_path)
-        print("✅ Alte Datenbank gelöscht.")
+    # Lösche das GESAMTE instance-Verzeichnis wenn es existiert
+    if os.path.exists(instance_path):
+        print(f"🗑️  Lösche komplettes instance-Verzeichnis: {instance_path}")
+        shutil.rmtree(instance_path)
+        print("✅ Instance-Verzeichnis gelöscht.")
     else:
-        print("ℹ️  Keine alte Datenbank gefunden.")
+        print("ℹ️  Kein instance-Verzeichnis gefunden.")
     
-    # Jetzt create_app aufrufen - es wird eine neue, leere Datenbank erstellt
+    # Erstelle instance-Verzeichnis neu
+    print("📁 Erstelle instance-Verzeichnis...")
+    os.makedirs(instance_path, exist_ok=True)
+    
+    # Jetzt create_app aufrufen - es wird eine komplett neue Datenbank erstellt
+    print("🔧 Initialisiere Flask-App...")
     app = create_app()
     
     with app.app_context():
