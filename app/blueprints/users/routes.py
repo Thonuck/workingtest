@@ -37,14 +37,14 @@ def register():
         password = request.form['password']
         if User.query.filter_by(username=username).first():
             flash('Benutzername existiert bereits.')
-            return redirect(url_for('register'))
+            return redirect(url_for('users.register'))
         new_user = User(username=username)
         # new_user.role = 'guest'
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         flash('Registrierung erfolgreich! Bitte logge dich ein.')
-        return redirect(url_for('login'))
+        return redirect(url_for('users.login'))
     return render_template('register.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -56,7 +56,7 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash('Login erfolgreich!')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('users.dashboard'))
         flash('Ungültiger Benutzername oder Passwort.')
     return render_template('login.html')
 
