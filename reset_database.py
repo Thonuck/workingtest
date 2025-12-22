@@ -16,19 +16,21 @@ from app.models import User
 def reset_database():
     """Löscht und erstellt die Datenbank neu."""
     
+    # Pfad zur Datenbank-Datei
+    db_path = 'instance/database.db'
+    
+    # Lösche alte Datenbank wenn sie existiert - BEVOR create_app aufgerufen wird!
+    if os.path.exists(db_path):
+        print(f"🗑️  Lösche alte Datenbank: {db_path}")
+        os.remove(db_path)
+        print("✅ Alte Datenbank gelöscht.")
+    else:
+        print("ℹ️  Keine alte Datenbank gefunden.")
+    
+    # Jetzt create_app aufrufen - es wird eine neue, leere Datenbank erstellt
     app = create_app()
     
     with app.app_context():
-        # Pfad zur Datenbank-Datei
-        db_path = 'instance/database.db'
-        
-        # Lösche alte Datenbank wenn sie existiert
-        if os.path.exists(db_path):
-            print(f"🗑️  Lösche alte Datenbank: {db_path}")
-            os.remove(db_path)
-        else:
-            print("ℹ️  Keine alte Datenbank gefunden.")
-        
         # Erstelle neue Datenbank mit aktuellem Schema
         print("🔨 Erstelle neue Datenbank mit aktuellem Schema...")
         db.create_all()
