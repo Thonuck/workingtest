@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager
 
 # 1. db-Instanz erstellen (ohne App)
@@ -38,7 +37,7 @@ def create_app():
         if existing_user:
             print("User existiert bereits!")
         else:
-            admin_user = models.User(username="admin", role="admin")
+            admin_user = models.User(username="admin", rolle="admin")
             admin_user.set_password("admin")
             db.session.add(admin_user)
             db.session.commit()
