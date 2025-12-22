@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""
-Database Reset Script
-
-<<<<<<< HEAD
-Dieses Script löscht die bestehende Datenbank komplett und erstellt sie neu mit dem aktuellen Schema.
-=======
-Dieses Script löscht die bestehende Datenbank und erstellt sie neu mit dem aktuellen Schema.
->>>>>>> 9abb48d (reset db)
-ACHTUNG: Alle Daten gehen verloren!
-
-Verwendung:
-    python reset_database.py
-"""
 
 import os
 import shutil
