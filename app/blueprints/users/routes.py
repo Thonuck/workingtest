@@ -56,7 +56,7 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash('Login erfolgreich!')
-            return redirect(url_for('users.dashboard'))
+            return redirect(url_for('main.index'))
         flash('Ungültiger Benutzername oder Passwort.')
     return render_template('login.html')
 
@@ -65,7 +65,7 @@ def login():
 def logout():
     logout_user()
     flash('Du wurdest ausgeloggt.')
-    return redirect(url_for('login'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/dashboard')
 @login_required
