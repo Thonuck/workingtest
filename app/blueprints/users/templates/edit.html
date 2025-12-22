@@ -1,15 +1,27 @@
-<html>
-    <head>
-        <title>Login</title>
-    </head>
+{% extends "base.html" %}
+{% block content %}
 
-    <body>
-        <h1>Register New User</h1>
+<div class="row mt-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Benutzer bearbeiten</h1>
+                
+                <form method="POST">
+                    <div class="form-group mb-3">
+                        <label>Benutzername</label>
+                        <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Neues Passwort (optional)</label>
+                        <input type="password" name="password" class="form-control" placeholder="Neues Passwort">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <form method="POST">
-            <input type="text" name="username" placeholder="Benutzername" required>
-            <input type="password" name="password" placeholder="Passwort" required>
-            <button type="submit">Registrieren</button>
-        </form>
-    </body>
-</html>
+{% endblock %}

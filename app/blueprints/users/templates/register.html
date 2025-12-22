@@ -1,15 +1,33 @@
-<html>
-    <head>
-        <title>Login</title>
-    </head>
+{% extends "base.html" %}
+{% block content %}
 
-    <body>
-        <h1>Register New User</h1>
+<div class="row mt-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Neuen Benutzer registrieren</h1>
+                
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    {% for message in messages %}
+                      <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                
+                <form method="POST">
+                    <div class="form-group mb-3">
+                        <input type="text" name="username" class="form-control" placeholder="Benutzername" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Passwort" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrieren</button>
+                    <a href="{{ url_for('users.login') }}" class="btn btn-link">Zurück zum Login</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <form method="POST">
-            <input type="text" name="username" placeholder="Benutzername" required>
-            <input type="password" name="password" placeholder="Passwort" required>
-            <button type="submit">Registrieren</button>
-        </form>
-    </body>
-</html>
+{% endblock %}
