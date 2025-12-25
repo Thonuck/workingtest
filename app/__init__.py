@@ -15,18 +15,18 @@ def create_app():
     # 2. db mit App verbinden
     db.init_app(app)
     
+    # LoginManager initialisieren und user_loader registrieren (außerhalb des App-Kontexts)
+    login_manager = LoginManager(app)
+    login_manager.login_view = 'login'
+
+    from app import models
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return models.User.query.get(int(user_id))
+    
     # 3. Blueprints registrieren (INNERHALB create_app)
     with app.app_context():
-
-        login_manager = LoginManager(app)
-        login_manager.login_view = 'login'
-
-        from app import models
-
-        @login_manager.user_loader
-        def load_user(user_id):
-            return models.User.query.get(int(user_id))
-
         from app.blueprints.users import bp as users_bp
         from app.blueprints.main import bp as main_bp
         app.register_blueprint(users_bp)
