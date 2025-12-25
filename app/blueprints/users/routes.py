@@ -174,8 +174,9 @@ def edit_user(user_id):
     
     if request.method == 'POST':
         user.username = request.form['username']
+        user.role = request.form['role']
         db.session.commit()
-        return redirect(url_for('users.user_detail', user_id=user.id))
+        return redirect(url_for('users.detail', user_id=user.id))
     
     return render_template('edit.html', user=user)
 
@@ -186,3 +187,8 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for('users.list_users'))
+
+@bp.route('/<int:user_id>/detail', methods=['POST'])
+def detail(user_id):
+    user = User.query.get_or_404(user_id)
+    return redirect('detail.html', user=user)
