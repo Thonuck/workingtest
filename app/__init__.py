@@ -38,6 +38,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    # TODO: Use environment variable for production: os.environ.get('SECRET_KEY')
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
     
     # 2. db mit App verbinden

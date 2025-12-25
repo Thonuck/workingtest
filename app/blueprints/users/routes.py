@@ -58,9 +58,9 @@ def delete_user(user_id):
     
     # Check if user is an admin
     if user.role == 'admin':
-        # Count remaining admin accounts
-        admin_count = User.query.filter_by(role='admin').count()
-        if admin_count <= 1:
+        # Count remaining admin accounts (excluding the one being deleted)
+        admin_count = User.query.filter(User.role == 'admin', User.id != user_id).count()
+        if admin_count < 1:
             flash('Cannot delete the last admin account. At least one admin must remain.', 'error')
             return redirect(url_for('users.user_detail', user_id=user.id))
     
