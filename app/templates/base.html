@@ -24,7 +24,7 @@
                       {% if current_user.is_authenticated %}
                       <li><a href="{{ url_for('users.logout') }}" class="nav-link px-2 text-white">Logout {{ current_user.username }}</a></li>
                       {% if current_user.role == 'admin' %}
-                        <li><a href="{{ url_for('users.register') }}" class="nav-link px-2 text-white">Benutzer anlegen</a></li>
+                        <li><a href="{{ url_for('users.list_users') }}" class="nav-link px-2 text-white">Benutzer</a></li>
                         <li><a href="#" class="nav-link px-2 text-white">WT erstellen</a></li>
                       {% endif %}
                       {% else %}

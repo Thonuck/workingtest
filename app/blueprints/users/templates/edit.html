@@ -13,8 +13,18 @@
                         <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
                     </div>
                     <div class="form-group mb-3">
+                        <label>Rolle</label>
+                        <select name="role" class="form-control" required>
+                            <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>Guest</option>
+                            <option value="helper" {% if user.role == 'helper' %}selected{% endif %}>Helper</option>
+                            <option value="organizer" {% if user.role == 'organizer' %}selected{% endif %}>Organizer</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
                         <label>Neues Passwort (optional)</label>
                         <input type="password" name="password" class="form-control" placeholder="Neues Passwort">
+                        
                     </div>
                     <button type="submit" class="btn btn-primary">Speichern</button>
                     <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
