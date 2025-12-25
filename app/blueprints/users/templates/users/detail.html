@@ -6,6 +6,8 @@
 <div class="container">
     <h1>{{ user.username }}</h1>
     <p>ID: {{ user.id }}</p>
+    <p>Email: {{ user.email or 'Not provided' }}</p>
+    <p>Role: {{ user.role }}</p>
     
     <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>
     
