@@ -37,7 +37,6 @@ def register():
             flash('Benutzername existiert bereits.')
             return redirect(url_for('users.register'))
         new_user = User(username=username)
-        # new_user.role = 'guest'
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
