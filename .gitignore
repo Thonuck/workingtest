@@ -1,3 +1,16 @@
 __pycache__/
 *.pyc
 *.pyo
+.venv/
+
+# Database files
+*.db
+instance/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
