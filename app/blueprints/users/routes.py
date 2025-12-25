@@ -18,9 +18,7 @@ def roles_required(roles):
 @bp.route('/set-role/<int:user_id>/<role>')
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
 def set_user_role(user_id, role):
-    user = User.query.get(user_id)
-    if not user:
-        return "Benutzer nicht gefunden", 404
+    user = User.query.get_or_404(user_id, description="Benutzer nicht gefunden")
     
     # Rolle setzen
     if role not in ['guest', 'helper', 'organizer', 'admin']:
