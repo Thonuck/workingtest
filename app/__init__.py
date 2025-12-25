@@ -31,6 +31,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 # 1. db-Instanz erstellen (ohne App)
 db = SQLAlchemy()
@@ -38,8 +39,8 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    # TODO: Use environment variable for production: os.environ.get('SECRET_KEY')
-    app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
+    # Use environment variable in production, fallback to dev key for development
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     
     # 2. db mit App verbinden
     db.init_app(app)

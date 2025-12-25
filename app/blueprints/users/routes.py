@@ -17,12 +17,10 @@ def user_detail(user_id):
 @bp.route('/create', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
-        role = request.form.get('role', 'guest')
-        email = request.form.get('email', None)
         user = User(
             username=request.form['username'],
-            email=email if email else None,
-            role=role
+            email=request.form.get('email') or None,
+            role=request.form.get('role', 'guest')
         )
         db.session.add(user)
         db.session.commit()
@@ -37,8 +35,7 @@ def edit_user(user_id):
     
     if request.method == 'POST':
         user.username = request.form['username']
-        email = request.form.get('email', None)
-        user.email = email if email else None
+        user.email = request.form.get('email') or None
         user.role = request.form.get('role', user.role)
         db.session.commit()
         flash(f'User {user.username} updated successfully.', 'success')
