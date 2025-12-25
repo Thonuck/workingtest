@@ -99,4 +99,4 @@ def delete_user(user_id):
 @bp.route('/<int:user_id>/detail')
 def detail(user_id):
     user = User.query.get_or_404(user_id)
-    return redirect('detail.html', user=user)
+    return render_template('detail.html', user=user)
