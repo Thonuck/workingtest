@@ -23,6 +23,10 @@
                       <li><a href="/" class="nav-link px-2 text-secondary">Home</a></li>
                       {% if current_user.is_authenticated %}
                       <li><a href="{{ url_for('users.logout') }}" class="nav-link px-2 text-white">Logout {{ current_user.username }}</a></li>
+                      {% if current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('users.register') }}" class="nav-link px-2 text-white">Benutzer anlegen</a></li>
+                        <li><a href="#" class="nav-link px-2 text-white">WT erstellen</a></li>
+                      {% endif %}
                       {% else %}
                       <li><a href="{{ url_for('users.login') }}" class="nav-link px-2 text-white">Login</a></li>
                       {% endif %}
