@@ -13,6 +13,7 @@
             <a href="#">
                 {{ user.username }}
             </a>
+            ({{ user.role }})
             <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-sm btn-secondary">Edit</a>
         </li>
         {% endfor %}
