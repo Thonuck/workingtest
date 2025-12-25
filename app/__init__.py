@@ -32,8 +32,10 @@ def create_app(config=None):
     with app.app_context():
         from app.blueprints.users import bp as users_bp
         from app.blueprints.main import bp as main_bp
+        from app.blueprints.wts import bp as wts_bp
         app.register_blueprint(users_bp)
         app.register_blueprint(main_bp)
+        app.register_blueprint(wts_bp)
         
         db.create_all()
 
