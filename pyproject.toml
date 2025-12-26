@@ -1,0 +1,26 @@
+[project]
+name = "workingtest"
+version = "0.1.0"
+description = "Flask application with user management"
+requires-python = ">=3.8"
+dependencies = [
+    "flask",
+    "flask-sqlalchemy",
+    "flask-migrate",
+    "flask-login",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "flask-pytest",
+]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v"
