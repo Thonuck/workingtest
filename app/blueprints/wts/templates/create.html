@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="row mt-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Neuen WR erstellen</h1>
+                
+                <form method="POST">
+                    <div class="form-group mb-3">
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Workingtest Name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Klasse</label>
+                        <select name="level" class="form-control" required>
+                            <option value="A">A</option>
+                            <option value="F">F</option>
+                            <option value="O">O</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Location</label>
+                        <input type="text" name="location" class="form-control" placeholder="Ort vom Workingtest" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Datum</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Workingtest Erstellen</button>
+                    <!--
+                    <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
+                    -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
