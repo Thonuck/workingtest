@@ -7,11 +7,14 @@ db = SQLAlchemy()
 
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your_secret_key_here_change_in_production'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    
+    if config is None:
+        app.config['SECRET_KEY'] = 'your_secret_key_here_change_in_production'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    else:
+        app.config.update(config)
+
     # 2. db mit App verbinden
     db.init_app(app)
     
