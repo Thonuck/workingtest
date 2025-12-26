@@ -4,16 +4,18 @@ version = "0.1.0"
 description = "Flask application with user management"
 requires-python = ">=3.8"
 dependencies = [
-    "flask",
-    "flask-sqlalchemy",
-    "flask-migrate",
-    "flask-login",
+    "flask==3.1.2",
+    "flask-sqlalchemy==3.1.1",
+    "flask-migrate==4.1.0",
+    "flask-login==0.6.3",
+    "werkzeug==3.1.4",
+    "sqlalchemy==2.0.45",
 ]
 
 [project.optional-dependencies]
 test = [
-    "pytest",
-    "flask-pytest",
+    "pytest==9.0.2",
+    "pytest-cov==7.0.0",
 ]
 
 [build-system]
