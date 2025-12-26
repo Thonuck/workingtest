@@ -7,6 +7,12 @@ __pycache__/
 *.db
 instance/
 
+# Coverage files
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
 # IDE
 .vscode/
 .idea/

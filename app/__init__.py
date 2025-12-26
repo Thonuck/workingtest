@@ -7,17 +7,20 @@ db = SQLAlchemy()
 
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your_secret_key_here_change_in_production'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    
+    if config is None:
+        app.config['SECRET_KEY'] = 'your_secret_key_here_change_in_production'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    else:
+        app.config.update(config)
+
     # 2. db mit App verbinden
     db.init_app(app)
     
     # LoginManager initialisieren und user_loader registrieren (außerhalb des App-Kontexts)
     login_manager = LoginManager(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'users.login'
 
     from app import models
 
