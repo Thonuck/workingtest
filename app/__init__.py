@@ -20,7 +20,7 @@ def create_app(config=None):
     
     # LoginManager initialisieren und user_loader registrieren (außerhalb des App-Kontexts)
     login_manager = LoginManager(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'users.login'
 
     from app import models
 
