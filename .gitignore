@@ -20,3 +20,11 @@ coverage.xml
 # OS
 .DS_Store
 Thumbs.db
+
+# Robot Framework output files
+log.html
+output.xml
+report.html
+
+# Selenium screenshots
+selenium*.png
