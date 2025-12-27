@@ -16,7 +16,7 @@ def roles_required(roles):
         return wrapper
     return decorator
 
-@bp.route('/create', methods=['GET', 'POST'])
+@bp.route('/create_wt', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
 def create_wt():
     if request.method == 'POST':
@@ -27,19 +27,19 @@ def create_wt():
 
         if not name or not level or not location or not date_str:
             flash('Bitte alle Felder ausfüllen.', 'danger')
-            return render_template('create.html')
+            return render_template('create_wt.html')
 
         try:
             comp_date = dt_date.fromisoformat(date_str)
         except ValueError:
             flash('Ungültiges Datum. Bitte im Format YYYY-MM-DD eingeben.', 'danger')
-            return render_template('create.html')
+            return render_template('create_wt.html')
 
         # Optional: Duplikate vermeiden (Name + Klasse)
         existing = Competition.query.filter_by(name=name, level=level).first()
         if existing:
             flash('Wettbewerb existiert bereits für diese Klasse.', 'warning')
-            return render_template('create.html')
+            return render_template('create_wt.html')
 
         competition = Competition(name=name, level=level, location=location, date=comp_date)
         db.session.add(competition)
