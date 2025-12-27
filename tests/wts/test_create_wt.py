@@ -1,6 +1,5 @@
 import pytest
 
-
 @pytest.fixture
 def logged_in_client(client):
     # Log in the user and return the client with the session
