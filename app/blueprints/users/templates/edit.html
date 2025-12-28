@@ -1,37 +1,14 @@
 {% extends "base.html" %}
+{% from "macros.html" import form_card, form_input, form_select %}
+
 {% block content %}
-
-<div class="row mt-5">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">Benutzer bearbeiten</h1>
-                
-                <form method="POST">
-                    <div class="form-group mb-3">
-                        <label>Benutzername</label>
-                        <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Rolle</label>
-                        <select name="role" class="form-control" required>
-                            <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>Guest</option>
-                            <option value="helper" {% if user.role == 'helper' %}selected{% endif %}>Helper</option>
-                            <option value="organizer" {% if user.role == 'organizer' %}selected{% endif %}>Organizer</option>
-                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Neues Passwort (optional)</label>
-                        <input type="password" name="password" class="form-control" placeholder="Neues Passwort">
-                        
-                    </div>
-                    <button type="submit" class="btn btn-primary">Speichern</button>
-                    <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% call form_card('Benutzer bearbeiten', show_flash=false) %}
+    <form method="POST">
+        {{ form_input('username', label='Benutzername', value=user.username, required=true) }}
+        {{ form_select('role', 'Rolle', [('guest', 'Guest'), ('helper', 'Helper'), ('organizer', 'Organizer'), ('admin', 'Admin')], selected=user.role, required=true) }}
+        {{ form_input('password', label='Neues Passwort (optional)', type='password', placeholder='Neues Passwort') }}
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
+    </form>
+{% endcall %}
 {% endblock %}
