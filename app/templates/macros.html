@@ -1,0 +1,63 @@
+{# Macro: Zentrierter Form-Card Wrapper #}
+{% macro form_card(title, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {{ flash_messages() }}
+                {% endif %}
+                
+                {{ caller() }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+
+{# Macro: Flash Messages Anzeige #}
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+
+{# Macro: Form Input Feld #}
+{% macro form_input(name, label=none, type='text', placeholder='', required=false, value='') %}
+<div class="form-group mb-3">
+    {% if label %}
+        <label>{{ label }}</label>
+    {% endif %}
+    <input 
+        type="{{ type }}" 
+        name="{{ name }}" 
+        class="form-control" 
+        placeholder="{{ placeholder }}"
+        {% if value %}value="{{ value }}"{% endif %}
+        {% if required %}required{% endif %}
+    >
+</div>
+{% endmacro %}
+
+
+{# Macro: Form Select Feld #}
+{% macro form_select(name, label, options, selected='', required=false) %}
+<div class="form-group mb-3">
+    <label>{{ label }}</label>
+    <select name="{{ name }}" class="form-control" {% if required %}required{% endif %}>
+        {% for value, text in options %}
+            <option value="{{ value }}" {% if value == selected %}selected{% endif %}>
+                {{ text }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
