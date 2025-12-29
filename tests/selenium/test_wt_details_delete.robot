@@ -13,7 +13,7 @@ ${PASSWORD}           admin
 ${WT_NAME}            Test WT Details
 ${WT_LEVEL}           A
 ${WT_LOCATION}        Test Location
-${WT_DATE}            2025-01-15
+${WT_DATE}            15.01.2025
 
 *** Test Cases ***
 Test WT Details And Delete
