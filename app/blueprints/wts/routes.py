@@ -16,6 +16,11 @@ def roles_required(roles):
         return wrapper
     return decorator
 
+@bp.route('/wts/details/<int:competition_id>')
+def wt_details(competition_id):
+    competition = Competition.query.get_or_404(competition_id)
+    return render_template('wt_details.html', competition=competition)
+
 @bp.route('/create_wt', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
 def create_wt():

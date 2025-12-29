@@ -1,0 +1,17 @@
+
+{% extends "base.html" %}
+{% from "macros.html" import wt_card, form_card, form_input, form_select %}
+
+{% block content %}
+{% call form_card('Workingtest Details', show_flash=false) %}
+    <div class="card-body">
+        <h5 class="card-title">Details für: {{ competition.name }}</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Klasse:</strong> {{ competition.degree }}</li>
+            <li class="list-group-item"><strong>Ort:</strong> {{ competition.location }}</li>
+            <li class="list-group-item"><strong>Datum:</strong> {{ competition.date }}</li>
+        </ul>   
+    </div>
+{% endcall %}
+
+{% endblock %}
