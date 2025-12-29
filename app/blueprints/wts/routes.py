@@ -61,5 +61,5 @@ def delete_wt(competition_id):
     competition = Competition.query.get_or_404(competition_id)
     db.session.delete(competition)
     db.session.commit()
-    flash('Working test deleted successfully.', 'success')
+    flash('Workingtest erfolgreich gelöscht.', 'success')
     return redirect(url_for('main.index'))
