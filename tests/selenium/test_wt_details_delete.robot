@@ -20,7 +20,7 @@ Test WT Details And Delete
     [Documentation]    Testet das Anlegen eines WT, Anzeigen der Details und Löschen.
     # 1. Login und neuen WT anlegen
     Login With Admin User
-    Click Link    WT erstellen
+    Click Link    xpath://a[@href='/wts/create_wt']
     Input Text    name:name        ${WT_NAME}
     Select From List By Value    name:level    ${WT_LEVEL}
     Input Text    name:location    ${WT_LOCATION}
