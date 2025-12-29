@@ -20,7 +20,7 @@ def test_create_wt(logged_in_client):
     # Step 2: Create a WT
     response = client.post('/wts/create_wt', data={
         'name': 'Test WT',
-        'level': 'Test Level',
+        'level': 'A',
         'location': 'Test Location',
         'date': '2024-06-01'
     }, follow_redirects=True)
