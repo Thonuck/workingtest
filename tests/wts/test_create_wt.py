@@ -1,5 +1,5 @@
 import pytest
-from flask import url_for
+
 
 @pytest.fixture
 def logged_in_client(client):
