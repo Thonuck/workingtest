@@ -53,3 +53,13 @@ def create_wt():
         return redirect(url_for('main.index'))
 
     return render_template("create_wt.html")
+
+@bp.route('/delete_wt/<int:competition_id>', methods=['POST'])
+@roles_required(['admin', 'organizer'])
+@login_required
+def delete_wt(competition_id):
+    competition = Competition.query.get_or_404(competition_id)
+    db.session.delete(competition)
+    db.session.commit()
+    flash('Working test deleted successfully.', 'success')
+    return redirect(url_for('main.index'))
