@@ -28,3 +28,8 @@ report.html
 
 # Selenium screenshots
 selenium*.png
+
+# Build artifacts
+build/
+*.egg-info/
+dist/

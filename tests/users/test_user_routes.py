@@ -292,3 +292,89 @@ def test_set_user_role_without_permission(client):
     response = client.get(f"/users/set-role/{user_id}/admin")
     
     assert response.status_code == 403
+
+
+def test_edit_user_with_password_update(client):
+    """Test User bearbeiten mit Passwort-Update"""
+    with client.application.app_context():
+        admin = User(username="admin_password_test", role="admin")
+        admin.set_password("adminpass")
+        db.session.add(admin)
+        
+        user_to_edit = User(username="passworduser")
+        user_to_edit.set_password("oldpassword")
+        db.session.add(user_to_edit)
+        db.session.commit()
+        
+        user_id = user_to_edit.id
+    
+    # Als Admin einloggen
+    client.post(
+        "/users/login",
+        data={
+            "username": "admin_password_test",
+            "password": "adminpass",
+        }
+    )
+    
+    # User bearbeiten mit neuem Passwort
+    response = client.post(
+        f"/users/{user_id}/edit",
+        data={
+            "username": "passworduser",
+            "role": "helper",
+            "password": "newpassword123",
+        },
+        follow_redirects=False
+    )
+    
+    assert response.status_code == 302
+    
+    # Prüfen, ob Passwort geändert wurde
+    with client.application.app_context():
+        edited_user = User.query.get(user_id)
+        assert edited_user.check_password("newpassword123")
+        assert not edited_user.check_password("oldpassword")
+
+
+def test_edit_user_without_password_update(client):
+    """Test User bearbeiten ohne Passwort-Update (Feld leer gelassen)"""
+    with client.application.app_context():
+        admin = User(username="admin_no_password", role="admin")
+        admin.set_password("adminpass")
+        db.session.add(admin)
+        
+        user_to_edit = User(username="keeppassword")
+        user_to_edit.set_password("keepthispassword")
+        db.session.add(user_to_edit)
+        db.session.commit()
+        
+        user_id = user_to_edit.id
+    
+    # Als Admin einloggen
+    client.post(
+        "/users/login",
+        data={
+            "username": "admin_no_password",
+            "password": "adminpass",
+        }
+    )
+    
+    # User bearbeiten ohne Passwort anzugeben
+    response = client.post(
+        f"/users/{user_id}/edit",
+        data={
+            "username": "keeppassword",
+            "role": "organizer",
+            "password": "",  # Leeres Passwort
+        },
+        follow_redirects=False
+    )
+    
+    assert response.status_code == 302
+    
+    # Prüfen, ob Passwort NICHT geändert wurde
+    with client.application.app_context():
+        edited_user = User.query.get(user_id)
+        assert edited_user.check_password("keepthispassword")
+        assert edited_user.role == "organizer"

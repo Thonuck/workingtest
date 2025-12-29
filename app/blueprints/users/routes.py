@@ -82,6 +82,12 @@ def edit_user(user_id):
     if request.method == 'POST':
         user.username = request.form['username']
         user.role = request.form['role']
+        
+        # Update password if provided
+        password = request.form.get('password', '').strip()
+        if password:
+            user.set_password(password)
+        
         db.session.commit()
         return redirect(url_for('users.list_users'))
     
