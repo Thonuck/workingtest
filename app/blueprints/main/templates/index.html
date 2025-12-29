@@ -1,52 +1,21 @@
 {% extends "base.html" %}
+{% import 'macros.html' as macros %}
+
 {% block content %}
 
-        <!-- learning by https://www.youtube.com/watch?v=eow125xV5-c  -->
-        <style>
-            .my-row-style {
-                background-color: bisque;
-                height: 400px;
-            }
-        </style>
-
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12">
-                <div class="p-3 border bg-light">
-                    <div class="d-flex justify-content-center">
-                        <h1>Workingtest Planer</h1>
-                    </div>
-                </div>
-            </div>
+    {% call macros.table_form('Workingtest Planer', competitions) %}
+        <div class="table-responsive">
+            {% call macros.table(['Competition', 'Degree', 'Location', 'Date']) %}
+                {% for competition in competitions %}
+                    {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
+                        <td>{{ competition.name }}</td>
+                        <td>{{ competition.degree }}</td>
+                        <td>{{ competition.location }}</td>
+                        <td class="d-none d-md-table-cell">{{ competition.date }}</td>
+                    {% endcall %}
+                {% endfor %}
+            {% endcall %}
         </div>
-            
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12">
-                <div class="p-3 border bg-light">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Competition</th>
-                                    <th>Degree</th>
-                                    <th>Location</th>
-                                    <th class="d-none d-md-table-cell">Date</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for competition in competitions %}
-                                <tr>
-                                    <td>{{ competition.name }}</td>
-                                    <td>{{ competition.degree }}</td>
-                                    <td>{{ competition.location }}</td>
-                                    <td class="d-none d-md-table-cell">{{ competition.date }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    {% endcall %}
 
 {% endblock %}
