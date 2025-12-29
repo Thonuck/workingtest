@@ -5,11 +5,11 @@
 
     {% call macros.table_form('Workingtest Planer', competitions) %}
         <div class="table-responsive">
-            {% call macros.table(['Competition', 'Degree', 'Location', 'Date']) %}
+            {% call macros.table(['Competition', 'Class', 'Location', 'Date']) %}
                 {% for competition in competitions %}
                     {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
                         <td>{{ competition.name }}</td>
-                        <td>{{ competition.degree }}</td>
+                        <td>{{ competition.level }}</td>
                         <td>{{ competition.location }}</td>
                         <td class="d-none d-md-table-cell">{{ competition.date }}</td>
                     {% endcall %}
