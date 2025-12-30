@@ -1,15 +1,37 @@
-{# --- Table Header --- #}
+{# 
+========================================================================
+ Jinja2 Makros für responsive Workingtest (WT) Table + Card Layout
+========================================================================
+ Präfix: wt_
+ Autor: Dein Name
+ Beschreibung:
+   - Hauptmakro: wt_table_form
+   - Unterstützt responsive Layout:
+       * Medium+ Screens: Tabelle in einer Card
+       * Kleine Screens: einzelne Cards pro Competition
+   - Flexibel: Spalten ausblenden, Buttons in Karten optional
+   - Flash-Messages optional
+========================================================================
+ Nutzung:
+   {% import "macros.html" as macros %}
+   {{ macros.wt_table_form(title, competitions, columns, show_flash=true, hide_columns_on_sm=[], show_buttons=false) }}
+========================================================================
+#}
+
+{# -----------------------
+   Table Makros
+----------------------- #}
+
 {% macro wt_table_header(columns) %}
 <thead>
     <tr>
         {% for col in columns %}
-        <th>{{ col }}</th>
+        <th class="{{ col.class|default('') }}">{{ col.name }}</th>
         {% endfor %}
     </tr>
 </thead>
 {% endmacro %}
 
-{# --- Table Row --- #}
 {% macro wt_table_row(url, *cells) %}
 <tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
     {% for cell in cells %}
@@ -18,30 +40,28 @@
 </tr>
 {% endmacro %}
 
-{# --- Full Table --- #}
-{% macro wt_table(columns, competitions) %}
+{% macro wt_table(columns, competitions, hide_columns_on_sm=[]) %}
 <table class="table table-striped table-hover">
     {{ wt_table_header(columns) }}
     <tbody>
         {% for competition in competitions %}
-            {{ wt_table_row(url_for('wts.wt_details', competition_id=competition.id),
-                competition.name,
-                competition.level,
-                competition.location,
-                competition.date) }}
+            {% set row_cells = [] %}
+            {% for col in columns %}
+                {% if col.name not in hide_columns_on_sm %}
+                    {% set _ = row_cells.append(competition[col.key]) %}
+                {% endif %}
+            {% endfor %}
+            {{ wt_table_row(url_for('wts.wt_details', competition_id=competition.id), *row_cells) }}
         {% endfor %}
     </tbody>
 </table>
 {% endmacro %}
 
-{% macro card_header(title, show_flash=true) %}
-<h1 class="card-title">{{ title }}</h1>
-{% if show_flash %}
-    {{ flash_messages() }}
-{% endif %}
-{% endmacro %}
+{# -----------------------
+   Card Makros (Small Screens)
+----------------------- #}
 
-{% macro wt_small_cards(competitions) %}
+{% macro wt_small_cards(competitions, show_buttons=false) %}
 <div class="d-block d-md-none">
     {% for competition in competitions %}
     <div class="card mb-3" onclick="window.location='{{ url_for('wts.wt_details', competition_id=competition.id) }}'" style="cursor: pointer;">
@@ -52,28 +72,43 @@
                 <strong>Location:</strong> {{ competition.location }}<br>
                 <strong>Date:</strong> {{ competition.date }}
             </p>
+            {% if show_buttons %}
+            <a href="{{ url_for('wts.edit', competition_id=competition.id) }}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{{ url_for('wts.delete', competition_id=competition.id) }}" class="btn btn-sm btn-danger">Delete</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
 </div>
 {% endmacro %}
 
-{% macro wt_table_card(title, competitions, show_flash=true) %}
+{# -----------------------
+   Card Makros (Medium+ Screens)
+----------------------- #}
+
+{% macro wt_table_card(title, competitions, columns, show_flash=true, hide_columns_on_sm=[]) %}
 <div class="card d-none d-md-block">
     <div class="card-body">
-        {{ card_header(title, show_flash) }}
+        <h1 class="card-title">{{ title }}</h1>
+        {% if show_flash %}
+            {{ flash_messages() }}
+        {% endif %}
         <div class="table-responsive">
-            {{ wt_table(['Competition', 'Class', 'Location', 'Date'], competitions) }}
+            {{ wt_table(columns, competitions, hide_columns_on_sm) }}
         </div>
     </div>
 </div>
 {% endmacro %}
 
-{% macro table_form(title, competitions, show_flash=true) %}
+{# -----------------------
+   Haupt-Makro
+----------------------- #}
+
+{% macro wt_table_form(title, competitions, columns, show_flash=true, hide_columns_on_sm=[], show_buttons=false) %}
 <div class="row mt-5">
     <div class="col-12">
-        {{ wt_table_card(title, competitions, show_flash) }}
-        {{ wt_small_cards(competitions) }}
+        {{ wt_table_card(title, competitions, columns, show_flash, hide_columns_on_sm) }}
+        {{ wt_small_cards(competitions, show_buttons) }}
     </div>
 </div>
 {% endmacro %}
