@@ -182,3 +182,88 @@ def test_delete_nonexistent_user(client):
 
     # Sollte 404 zurückgeben
     assert response.status_code == 404
+
+
+def test_register_password_too_short(client):
+    """Test Registrierung mit zu kurzem Passwort"""
+    response = client.post(
+        "/users/register",
+        data={
+            "username": "weakuser",
+            "password": "ab1",  # Nur 3 Zeichen
+        },
+        follow_redirects=False
+    )
+
+    # Sollte zur Register-Seite zurück weiterleiten
+    assert response.status_code == 302
+    assert "/register" in response.location
+
+    # Prüfe, ob der User NICHT in der Datenbank existiert
+    with client.application.app_context():
+        user = User.query.filter_by(username="weakuser").first()
+        assert user is None
+
+
+def test_register_password_no_letter(client):
+    """Test Registrierung mit Passwort ohne Buchstaben"""
+    response = client.post(
+        "/users/register",
+        data={
+            "username": "numericuser",
+            "password": "12345678",  # Nur Zahlen
+        },
+        follow_redirects=False
+    )
+
+    # Sollte zur Register-Seite zurück weiterleiten
+    assert response.status_code == 302
+    assert "/register" in response.location
+
+    # Prüfe, ob der User NICHT in der Datenbank existiert
+    with client.application.app_context():
+        user = User.query.filter_by(username="numericuser").first()
+        assert user is None
+
+
+def test_register_password_no_digit(client):
+    """Test Registrierung mit Passwort ohne Ziffern"""
+    response = client.post(
+        "/users/register",
+        data={
+            "username": "letteruser",
+            "password": "abcdefgh",  # Nur Buchstaben
+        },
+        follow_redirects=False
+    )
+
+    # Sollte zur Register-Seite zurück weiterleiten
+    assert response.status_code == 302
+    assert "/register" in response.location
+
+    # Prüfe, ob der User NICHT in der Datenbank existiert
+    with client.application.app_context():
+        user = User.query.filter_by(username="letteruser").first()
+        assert user is None
+
+
+def test_register_valid_password(client):
+    """Test Registrierung mit gültigem Passwort"""
+    response = client.post(
+        "/users/register",
+        data={
+            "username": "validuser",
+            "password": "SecurePass123",  # Gültiges Passwort
+        },
+        follow_redirects=False
+    )
+
+    # Sollte zum Login weiterleiten
+    assert response.status_code == 302
+    assert "/login" in response.location
+
+    # Prüfe, ob der User in der Datenbank existiert
+    with client.application.app_context():
+        user = User.query.filter_by(username="validuser").first()
+        assert user is not None
+        assert user.check_password("SecurePass123")

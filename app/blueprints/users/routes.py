@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app.blueprints.users import bp
 from app import db
-from app.models import User
+from app.models import User, validate_password
 
 def roles_required(roles):
     def decorator(func):
@@ -36,6 +36,13 @@ def register():
         if User.query.filter_by(username=username).first():
             flash('Benutzername existiert bereits.')
             return redirect(url_for('users.register'))
+        
+        # Validate password
+        is_valid, error_message = validate_password(password)
+        if not is_valid:
+            flash(error_message)
+            return redirect(url_for('users.register'))
+        
         new_user = User(username=username)
         new_user.set_password(password)
         db.session.add(new_user)
