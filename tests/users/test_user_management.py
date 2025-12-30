@@ -267,3 +267,16 @@ def test_register_valid_password(client):
         user = User.query.filter_by(username="validuser").first()
         assert user is not None
         assert user.check_password("SecurePass123")
+
+
+def test_validate_password_empty(client):
+    """Test validate_password function with empty password"""
+    from app.models import validate_password
+    
+    is_valid, error_message = validate_password("")
+    assert not is_valid
+    assert error_message is not None
+    
+    is_valid, error_message = validate_password(None)
+    assert not is_valid
+    assert error_message is not None

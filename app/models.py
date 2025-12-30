@@ -15,6 +15,9 @@ def validate_password(password):
     Returns:
         tuple: (is_valid: bool, error_message: str or None)
     """
+    if not password or not isinstance(password, str):
+        return False, "Ungültiges Passwort-Format."
+    
     if len(password) < 8:
         return False, "Das Passwort muss mindestens 8 Zeichen lang sein."
     
