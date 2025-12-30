@@ -1,5 +1,5 @@
 {# --- Table Header --- #}
-{% macro table_header(columns) %}
+{% macro wt_table_header(columns) %}
 <thead>
     <tr>
         {% for col in columns %}
@@ -10,7 +10,7 @@
 {% endmacro %}
 
 {# --- Table Row --- #}
-{% macro table_row(url, *cells) %}
+{% macro wt_table_row(url, *cells) %}
 <tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
     {% for cell in cells %}
     <td>{{ cell }}</td>
@@ -19,12 +19,12 @@
 {% endmacro %}
 
 {# --- Full Table --- #}
-{% macro table(columns, competitions) %}
+{% macro wt_table(columns, competitions) %}
 <table class="table table-striped table-hover">
-    {{ table_header(columns) }}
+    {{ wt_table_header(columns) }}
     <tbody>
         {% for competition in competitions %}
-            {{ table_row(url_for('wts.wt_details', competition_id=competition.id),
+            {{ wt_table_row(url_for('wts.wt_details', competition_id=competition.id),
                 competition.name,
                 competition.level,
                 competition.location,
@@ -41,7 +41,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro small_cards(competitions) %}
+{% macro wt_small_cards(competitions) %}
 <div class="d-block d-md-none">
     {% for competition in competitions %}
     <div class="card mb-3" onclick="window.location='{{ url_for('wts.wt_details', competition_id=competition.id) }}'" style="cursor: pointer;">
@@ -58,12 +58,12 @@
 </div>
 {% endmacro %}
 
-{% macro table_card(title, competitions, show_flash=true) %}
+{% macro wt_table_card(title, competitions, show_flash=true) %}
 <div class="card d-none d-md-block">
     <div class="card-body">
         {{ card_header(title, show_flash) }}
         <div class="table-responsive">
-            {{ table(['Competition', 'Class', 'Location', 'Date'], competitions) }}
+            {{ wt_table(['Competition', 'Class', 'Location', 'Date'], competitions) }}
         </div>
     </div>
 </div>
@@ -72,8 +72,8 @@
 {% macro table_form(title, competitions, show_flash=true) %}
 <div class="row mt-5">
     <div class="col-12">
-        {{ table_card(title, competitions, show_flash) }}
-        {{ small_cards(competitions) }}
+        {{ wt_table_card(title, competitions, show_flash) }}
+        {{ wt_small_cards(competitions) }}
     </div>
 </div>
 {% endmacro %}
