@@ -1,0 +1,79 @@
+{# --- Table Header --- #}
+{% macro table_header(columns) %}
+<thead>
+    <tr>
+        {% for col in columns %}
+        <th>{{ col }}</th>
+        {% endfor %}
+    </tr>
+</thead>
+{% endmacro %}
+
+{# --- Table Row --- #}
+{% macro table_row(url, *cells) %}
+<tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
+    {% for cell in cells %}
+    <td>{{ cell }}</td>
+    {% endfor %}
+</tr>
+{% endmacro %}
+
+{# --- Full Table --- #}
+{% macro table(columns, competitions) %}
+<table class="table table-striped table-hover">
+    {{ table_header(columns) }}
+    <tbody>
+        {% for competition in competitions %}
+            {{ table_row(url_for('wts.wt_details', competition_id=competition.id),
+                competition.name,
+                competition.level,
+                competition.location,
+                competition.date) }}
+        {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+
+{% macro card_header(title, show_flash=true) %}
+<h1 class="card-title">{{ title }}</h1>
+{% if show_flash %}
+    {{ flash_messages() }}
+{% endif %}
+{% endmacro %}
+
+{% macro small_cards(competitions) %}
+<div class="d-block d-md-none">
+    {% for competition in competitions %}
+    <div class="card mb-3" onclick="window.location='{{ url_for('wts.wt_details', competition_id=competition.id) }}'" style="cursor: pointer;">
+        <div class="card-body">
+            <h5 class="card-title">{{ competition.name }}</h5>
+            <p class="card-text">
+                <strong>Degree:</strong> {{ competition.level }}<br>
+                <strong>Location:</strong> {{ competition.location }}<br>
+                <strong>Date:</strong> {{ competition.date }}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro table_card(title, competitions, show_flash=true) %}
+<div class="card d-none d-md-block">
+    <div class="card-body">
+        {{ card_header(title, show_flash) }}
+        <div class="table-responsive">
+            {{ table(['Competition', 'Class', 'Location', 'Date'], competitions) }}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro table_form(title, competitions, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12">
+        {{ table_card(title, competitions, show_flash) }}
+        {{ small_cards(competitions) }}
+    </div>
+</div>
+{% endmacro %}
