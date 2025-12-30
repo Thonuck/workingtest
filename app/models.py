@@ -1,6 +1,33 @@
 from app import db  # ✅ Normaler Import am Anfang!
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import re
+
+
+def validate_password(password):
+    """
+    Validate password strength.
+    Requirements:
+    - At least 8 characters long
+    - Contains at least one letter
+    - Contains at least one digit
+    
+    Returns:
+        tuple: (is_valid: bool, error_message: str or None)
+    """
+    if not password or not isinstance(password, str):
+        return False, "Ungültiges Passwort-Format."
+    
+    if len(password) < 8:
+        return False, "Das Passwort muss mindestens 8 Zeichen lang sein."
+    
+    if not re.search(r'[A-Za-z]', password):
+        return False, "Das Passwort muss mindestens einen Buchstaben enthalten."
+    
+    if not re.search(r'\d', password):
+        return False, "Das Passwort muss mindestens eine Ziffer enthalten."
+    
+    return True, None
 
 
 class User(UserMixin, db.Model):
