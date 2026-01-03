@@ -19,39 +19,46 @@
 #}
 
 {# -----------------------
-   Table Makros
+    Table Makros
 ----------------------- #}
+
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% endmacro %}
 
 {% macro wt_table_header(columns) %}
 <thead>
     <tr>
         {% for col in columns %}
-        <th class="{{ col.class|default('') }}">{{ col.name }}</th>
+        <th>{{ col }}</th>
         {% endfor %}
     </tr>
 </thead>
 {% endmacro %}
 
-{% macro wt_table_row(url, *cells) %}
+{% macro wt_table_row(url, competition) %}
 <tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
-    {% for cell in cells %}
-    <td>{{ cell }}</td>
-    {% endfor %}
+    <!--  {{ cells }} -->
+    <td>{{ competition.name }}</td>
+    <td>{{ competition.level }}</td>
+    <td>{{ competition.location }}</td>
+    <td>{{ competition.date }}</td>
 </tr>
 {% endmacro %}
 
-{% macro wt_table(columns, competitions, hide_columns_on_sm=[]) %}
+{% macro wt_table(competitions) %}
 <table class="table table-striped table-hover">
-    {{ wt_table_header(columns) }}
+    {{ wt_table_header(['Name', 'Level', 'Location', 'Date']) }}
     <tbody>
         {% for competition in competitions %}
-            {% set row_cells = [] %}
-            {% for col in columns %}
-                {% if col.name not in hide_columns_on_sm %}
-                    {% set _ = row_cells.append(competition[col.key]) %}
-                {% endif %}
-            {% endfor %}
-            {{ wt_table_row(url_for('wts.wt_details', competition_id=competition.id), *row_cells) }}
+        <!--  {{ competition }} -->
+            {{ wt_table_row(url_for('wts.wt_details', competition_id=competition.id), competition) }}
         {% endfor %}
     </tbody>
 </table>
@@ -94,7 +101,7 @@
             {{ flash_messages() }}
         {% endif %}
         <div class="table-responsive">
-            {{ wt_table(columns, competitions, hide_columns_on_sm) }}
+            {{ wt_table(competitions) }}
         </div>
     </div>
 </div>

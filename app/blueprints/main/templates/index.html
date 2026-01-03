@@ -1,21 +1,8 @@
 {% extends "base.html" %}
-{% import 'macros.html' as macros %}
+{% import 'table_macros.html' as macros %}
 
 {% block content %}
 
-    {% call macros.table_form('Workingtest Planer', competitions) %}
-        <div class="table-responsive">
-            {% call macros.table(['Competition', 'Class', 'Location', 'Date']) %}
-                {% for competition in competitions %}
-                    {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
-                        <td>{{ competition.name }}</td>
-                        <td>{{ competition.level }}</td>
-                        <td>{{ competition.location }}</td>
-                        <td class="d-none d-md-table-cell">{{ competition.date }}</td>
-                    {% endcall %}
-                {% endfor %}
-            {% endcall %}
-        </div>
-    {% endcall %}
+    {{ macros.wt_table_form("Workingtest Planer", competitions, columns, show_flash=true, hide_columns_on_sm=[], show_buttons=false) }}
 
 {% endblock %}

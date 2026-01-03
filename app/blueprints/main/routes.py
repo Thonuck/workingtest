@@ -8,7 +8,10 @@ def index():
     competitions = Competition.query.all()
     # print("Hello Visitor!")
     # return render_template('index.html')
-    return render_template('index.html', competitions=competitions)
+    return render_template('index.html',
+                           competitions=competitions,
+                           title="Home",
+                           columns=["Competition", "Class", "Location", "Date"])
 
 
 @bp.route('/about')
