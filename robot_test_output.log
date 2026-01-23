@@ -1,0 +1,27 @@
+==============================================================================
+Selenium                                                                      
+==============================================================================
+Selenium.Test User Login                                                      
+==============================================================================
+Test User Login :: Testet den Login eines Benutzers.                  | PASS |
+------------------------------------------------------------------------------
+Test Create Competition :: Testet die Erstellung eines neuen Wettb... | FAIL |
+Text 'Test Wettbewerb' did not appear in 5 seconds.
+------------------------------------------------------------------------------
+Selenium.Test User Login                                              | FAIL |
+2 tests, 1 passed, 1 failed
+==============================================================================
+Selenium.Test Wt Details Delete                                               
+==============================================================================
+Test WT Details And Delete :: Testet das Anlegen eines WT, Anzeige... | FAIL |
+Text 'Test WT Details' did not appear in 15 seconds.
+------------------------------------------------------------------------------
+Selenium.Test Wt Details Delete                                       | FAIL |
+1 test, 0 passed, 1 failed
+==============================================================================
+Selenium                                                              | FAIL |
+3 tests, 1 passed, 2 failed
+==============================================================================
+Output:  /home/thomas/development/workingtest/output.xml
+Log:     /home/thomas/development/workingtest/log.html
+Report:  /home/thomas/development/workingtest/report.html

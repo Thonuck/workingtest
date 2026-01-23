@@ -1,8 +1,5 @@
 *** Settings ***
-Library           Process
 Library           SeleniumLibrary
-Suite Setup       Start Web App
-Suite Teardown    Stop Web App
 
 *** Variables ***
 ${LOGIN_PAGE}         http://localhost:5000/users/login
@@ -13,7 +10,7 @@ ${PASSWORD}           admin
 ${WT_NAME}            Test WT Details
 ${WT_LEVEL}           A
 ${WT_LOCATION}        Test Location
-${WT_DATE}            15.01.2025
+${WT_DATE}            2025-01-15
 
 *** Test Cases ***
 Test WT Details And Delete
@@ -24,7 +21,7 @@ Test WT Details And Delete
     Input Text    name:name        ${WT_NAME}
     Select From List By Value    name:level    ${WT_LEVEL}
     Input Text    name:location    ${WT_LOCATION}
-    Input Text    name:date        ${WT_DATE}
+    Execute JavaScript    document.querySelector('input[name="date"]').value = '${WT_DATE}'
     Click Button  xpath://button[@type='submit']
     Wait Until Page Contains    ${WT_NAME}    timeout=15s
     
@@ -52,12 +49,3 @@ Login With Admin User
     Input Text      name:password    ${PASSWORD}
     Click Button    xpath://button[@type='submit']
     Wait Until Page Contains    Logout admin    timeout=10s
-
-Start Web App
-    [Documentation]    Startet die Webanwendung.
-    Start Process     python    run.py
-    Sleep    5s
-
-Stop Web App
-    [Documentation]    Stoppt die Webanwendung.
-    Terminate All Processes
