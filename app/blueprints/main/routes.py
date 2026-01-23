@@ -1,14 +1,25 @@
 from flask import render_template, jsonify, request, redirect, url_for
+from flask_login import current_user
 from app.blueprints.main import bp
 from app import db
-from app.models import Competition
+from app.models import Competition, CompetitionResult
 
 @bp.route('/')
 def index():
     competitions = Competition.query.all()
-    # print("Hello Visitor!")
-    # return render_template('index.html')
-    return render_template('index.html', competitions=competitions)
+    
+    # Prepare competition data with result status
+    comp_data = []
+    for comp in competitions:
+        result_status = CompetitionResult.query.filter_by(competition_id=comp.id).first()
+        is_published = result_status.published if result_status else False
+        
+        comp_data.append({
+            'competition': comp,
+            'results_published': is_published
+        })
+    
+    return render_template('index.html', comp_data=comp_data)
 
 
 @bp.route('/about')
