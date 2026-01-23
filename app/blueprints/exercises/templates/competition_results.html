@@ -10,6 +10,7 @@
         location=competition.location,
         date=competition.date
     ) %}
+        {% if is_admin_or_organizer %}
         <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
             <div>{{ status_badge(result_status.published if result_status else false) }}</div>
             {% if result_status and result_status.published %}
@@ -22,6 +23,11 @@
             </form>
             {% endif %}
         </div>
+        {% else %}
+        <div class="d-flex gap-2 flex-wrap justify-content-end align-items-center">
+            <div>{{ status_badge(result_status.published if result_status else false) }}</div>
+        </div>
+        {% endif %}
     {% endcall %}
 
     <hr>
