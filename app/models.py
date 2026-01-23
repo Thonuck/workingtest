@@ -59,3 +59,48 @@ class Exercise(db.Model):
     competition_id = db.Column(db.Integer, db.ForeignKey('competition.id'), nullable=False)
     judge_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     helper_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    max_points = db.Column(db.Integer, default=100, nullable=False)
+    
+    # Relationships
+    competition = db.relationship('Competition', backref=db.backref('exercises', lazy=True))
+    judge = db.relationship('User', foreign_keys=[judge_id], backref=db.backref('judged_exercises', lazy=True))
+    helper = db.relationship('User', foreign_keys=[helper_id], backref=db.backref('helped_exercises', lazy=True))
+
+
+# Exercise Point Entry model - for helpers to enter points
+class ExercisePointEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
+    starter_id = db.Column(db.Integer, db.ForeignKey('starter.id'), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    
+    # Relationships
+    exercise = db.relationship('Exercise', backref=db.backref('point_entries', lazy=True))
+    starter = db.relationship('Starter', backref=db.backref('point_entries', lazy=True))
+
+
+# Exercise Result model - for final results
+class ExerciseResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
+    starter_id = db.Column(db.Integer, db.ForeignKey('starter.id'), nullable=False)
+    points = db.Column(db.Integer, nullable=True)
+    published = db.Column(db.Boolean, default=False)
+    
+    # Relationships
+    exercise = db.relationship('Exercise', backref=db.backref('results', lazy=True))
+    starter = db.relationship('Starter', backref=db.backref('exercise_results', lazy=True))
+
+
+# Update Competition model to track publication status
+class CompetitionResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    competition_id = db.Column(db.Integer, db.ForeignKey('competition.id'), nullable=False, unique=True)
+    published = db.Column(db.Boolean, default=False)
+    published_at = db.Column(db.DateTime, nullable=True)
+    
+    # Relationship
+    competition = db.relationship('Competition', backref=db.backref('result_status', uselist=False))

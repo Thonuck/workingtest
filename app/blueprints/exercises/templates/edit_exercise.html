@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Exercise - {{ exercise.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>Edit Exercise</h1>
+            <p class="text-muted">{{ exercise.name }}</p>
+            
+            <form method="POST" class="form">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Exercise Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ exercise.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="max_points" class="form-label">Max Points</label>
+                    <input type="number" class="form-control" id="max_points" name="max_points" value="{{ exercise.max_points }}" min="1">
+                </div>
+
+                <div class="mb-3">
+                    <label for="judge_id" class="form-label">Judge</label>
+                    <select class="form-select" id="judge_id" name="judge_id">
+                        <option value="">-- No judge --</option>
+                        {% for user in users %}
+                        {% if user.role in ['admin', 'organizer', 'judge'] %}
+                        <option value="{{ user.id }}" {% if exercise.judge_id == user.id %}selected{% endif %}>
+                            {{ user.username }} ({{ user.role }})
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="helper_id" class="form-label">Helper</label>
+                    <select class="form-select" id="helper_id" name="helper_id">
+                        <option value="">-- No helper --</option>
+                        {% for user in users %}
+                        {% if user.role in ['admin', 'organizer', 'helper'] %}
+                        <option value="{{ user.id }}" {% if exercise.helper_id == user.id %}selected{% endif %}>
+                            {{ user.username }} ({{ user.role }})
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Update Exercise</button>
+                    <a href="{{ url_for('exercises.wt_exercises', competition_id=exercise.competition_id) }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
