@@ -212,18 +212,13 @@ def exercise_point_entry(exercise_id):
 
 # ==================== RESULTS PAGE ====================
 @bp.route('/results/<int:competition_id>')
-@login_required
 def competition_results(competition_id):
     """Display final results of a working test.
     
-    - Only organizers and admins can view and manage results
-    - Results can be published to make them visible to visitors
+    - Admin/Organizer: Always see full results page with publish/unpublish options
+    - Helper/Visitor: Can see results if published, otherwise "No results available yet"
     """
     competition = Competition.query.get_or_404(competition_id)
-    
-    # Check authorization
-    if current_user.role not in ['admin', 'organizer']:
-        abort(403)
     
     exercises = Exercise.query.filter_by(competition_id=competition_id).all()
     starters = Starter.query.filter_by(competition_id=competition_id).all()
@@ -238,36 +233,47 @@ def competition_results(competition_id):
         db.session.add(result_status)
         db.session.commit()
     
-    # Calculate results for each starter
-    starter_results = {}
-    for starter in starters:
-        total_points = 0
-        exercise_scores = {}
-        
-        for exercise in exercises:
-            point_entry = ExercisePointEntry.query.filter_by(
-                exercise_id=exercise.id,
-                starter_id=starter.id
-            ).first()
+    # Check if user is admin/organizer
+    is_admin_or_organizer = (
+        current_user.is_authenticated and 
+        current_user.role in ['admin', 'organizer']
+    )
+    
+    # For non-admins: only show results if published
+    if not is_admin_or_organizer and not result_status.published:
+        starter_results = {}
+    else:
+        # Calculate results for each starter
+        starter_results = {}
+        for starter in starters:
+            total_points = 0
+            exercise_scores = {}
             
-            if point_entry:
-                exercise_scores[exercise.id] = point_entry.points
-                total_points += point_entry.points
-            else:
-                exercise_scores[exercise.id] = None
-        
-        starter_results[starter.id] = {
-            'starter': starter,
-            'exercise_scores': exercise_scores,
-            'total_points': total_points
-        }
+            for exercise in exercises:
+                point_entry = ExercisePointEntry.query.filter_by(
+                    exercise_id=exercise.id,
+                    starter_id=starter.id
+                ).first()
+                
+                if point_entry:
+                    exercise_scores[exercise.id] = point_entry.points
+                    total_points += point_entry.points
+                else:
+                    exercise_scores[exercise.id] = None
+            
+            starter_results[starter.id] = {
+                'starter': starter,
+                'exercise_scores': exercise_scores,
+                'total_points': total_points
+            }
     
     return render_template(
         'competition_results.html',
         competition=competition,
         exercises=exercises,
         starter_results=starter_results,
-        result_status=result_status
+        result_status=result_status,
+        is_admin_or_organizer=is_admin_or_organizer
     )
 
 

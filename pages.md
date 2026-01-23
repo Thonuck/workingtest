@@ -168,7 +168,7 @@ The final results/leaderboard screen for an entire working test.
 
 **Display Rules**:
 - **Organizer/Admin**: Always see the full results page and can publish/unpublish
-- **Visitor/Helper**: Can see if published (from index page), otherwise no access
+- **Visitor/Helper**: Can see if published (from index page), otherwise the page displays "No Result Available yet" to the visitor.
 
 **Access Control**: login_required, roles_required(['admin', 'organizer'])
 
