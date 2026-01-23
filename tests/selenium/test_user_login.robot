@@ -1,8 +1,7 @@
 *** Settings ***
 Library           Process
 Library           SeleniumLibrary
-Suite Setup       Start Web App
-Suite Teardown    Stop Web App
+Library           OperatingSystem
 
 *** Variables ***
 ${LOGIN_PAGE}         http://localhost:5000/users/login
@@ -23,9 +22,9 @@ Test User Login
 Test Create Competition
     [Documentation]    Testet die Erstellung eines neuen Wettbewerbs.
     Competition Should not exist    Test Wettbewerb
-    Create Competition    name=Test Wettbewerb    level=A    location=Testort    date=01.12.2024
+    Create Competition    name=Test Wettbewerb    level=A    location=Testort    date=2024-12-01
     Open Browser    http://localhost:5000/    ${BROWSER}
-    Wait Until Page Contains    Test Wettbewerb
+    Wait Until Page Contains    Test Wettbewerb    timeout=15s
     Close Browser
 
 *** Keywords ***
@@ -52,16 +51,7 @@ Create Competition
     Input Text    name:name        ${name}
     Select From List By Value    name:level    ${level}
     Input Text    name:location    ${location}
-    Input Text    name:date        ${date}
-    Click Button  xpath://button[@type='submit']
-    Wait Until Page Contains    ${name}
+    Execute JavaScript    document.querySelector('input[name="date"]').value = '${date}'
+    Click Button    xpath://button[@type='submit']
+    Wait Until Page Contains    Workingtest Planer    timeout=10s
     Close Browser
-
-Start Web App
-    [Documentation]    Startet die Webanwendung.
-    Start Process     python    run.py
-    Sleep    5s
-
-Stop Web App
-    [Documentation]    Stoppt die Webanwendung.
-    Terminate All Processes

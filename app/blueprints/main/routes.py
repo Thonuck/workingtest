@@ -19,7 +19,7 @@ def index():
             'results_published': is_published
         })
     
-    return render_template('index.html', comp_data=comp_data)
+    return render_template('index.html', competitions=competitions)
 
 
 @bp.route('/about')

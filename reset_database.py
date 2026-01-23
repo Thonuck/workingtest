@@ -37,17 +37,8 @@ def reset_database():
     app = create_app()
     
     with app.app_context():
-        # Erstelle neue Datenbank mit aktuellem Schema
-        print("🔨 Erstelle neue Datenbank mit aktuellem Schema...")
-        db.create_all()
-        
-        # Erstelle Admin-User
-        print("👤 Erstelle Admin-User...")
-        admin_user = User(username="admin", role="admin")
-        admin_user.set_password("admin")
-        db.session.add(admin_user)
-        db.session.commit()
-        
+        # create_app() erstellt bereits die Datenbank und den Admin-User!
+        # Wir müssen nichts weiter tun.
         print("✅ Datenbank erfolgreich zurückgesetzt!")
         print("\n📋 Standard-Login:")
         print("   Username: admin")
