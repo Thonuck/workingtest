@@ -28,3 +28,4 @@ report.html
 
 # Selenium screenshots
 selenium*.png
+server.log
