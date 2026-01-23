@@ -1,55 +1,34 @@
 {% extends "base.html" %}
+{% from "macros.html" import form_section, input_field, select_field %}
 
 {% block title %}Add Exercise - {{ competition.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>Add Exercise</h1>
-            <p class="text-muted">{{ competition.name }} ({{ competition.level }})</p>
-            
-            <form method="POST" class="form">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Exercise Name *</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="max_points" class="form-label">Max Points</label>
-                    <input type="number" class="form-control" id="max_points" name="max_points" value="100" min="1">
-                </div>
-
-                <div class="mb-3">
-                    <label for="judge_id" class="form-label">Judge</label>
-                    <select class="form-select" id="judge_id" name="judge_id">
-                        <option value="">-- No judge --</option>
-                        {% for user in users %}
-                        {% if user.role in ['admin', 'organizer', 'judge'] %}
-                        <option value="{{ user.id }}">{{ user.username }} ({{ user.role }})</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="helper_id" class="form-label">Helper</label>
-                    <select class="form-select" id="helper_id" name="helper_id">
-                        <option value="">-- No helper --</option>
-                        {% for user in users %}
-                        {% if user.role in ['admin', 'organizer', 'helper'] %}
-                        <option value="{{ user.id }}">{{ user.username }} ({{ user.role }})</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Create Exercise</button>
-                    <a href="{{ url_for('exercises.wt_exercises', competition_id=competition.id) }}" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{% call form_section(
+    'Add Exercise',
+    submit_label='Create Exercise',
+    cancel_url=url_for('exercises.wt_exercises', competition_id=competition.id),
+    show_flash=true
+) %}
+    <p class="text-muted mb-4">{{ competition.name }} ({{ competition.level }})</p>
+    
+    {{ input_field('name', 'Exercise Name', required=true) }}
+    {{ input_field('max_points', 'Max Points', type='number', value='100', min=1) }}
+    
+    {% set judge_options = [] %}
+    {% for user in users %}
+        {% if user.role in ['admin', 'organizer', 'judge'] %}
+            {% set _ = judge_options.append((user.id, user.username + ' (' + user.role + ')')) %}
+        {% endif %}
+    {% endfor %}
+    {{ select_field('judge_id', 'Judge', judge_options, empty_option='-- No judge --') }}
+    
+    {% set helper_options = [] %}
+    {% for user in users %}
+        {% if user.role in ['admin', 'organizer', 'helper'] %}
+            {% set _ = helper_options.append((user.id, user.username + ' (' + user.role + ')')) %}
+        {% endif %}
+    {% endfor %}
+    {{ select_field('helper_id', 'Helper', helper_options, empty_option='-- No helper --') }}
+{% endcall %}
 {% endblock %}

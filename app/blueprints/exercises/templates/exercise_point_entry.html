@@ -1,74 +1,63 @@
 {% extends "base.html" %}
+{% from "macros.html" import page_header, data_table %}
 
 {% block title %}Point Entry - {{ exercise.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-            <h1>{{ exercise.name }}</h1>
-            <p class="text-muted">
-                {{ exercise.competition.name }} | 
-                Max Points: {{ exercise.max_points }}
-                {% if exercise.helper %}
-                | Helper: {{ exercise.helper.username }}
-                {% endif %}
-            </p>
+    {% call page_header(
+        exercise.name,
+        subtitle=exercise.competition.name
+    ) %}
+    {% endcall %}
+    
+    <p class="text-muted mb-4">
+        Max Points: <strong>{{ exercise.max_points }}</strong>
+        {% if exercise.helper %}
+        | Helper: <strong>{{ exercise.helper.username }}</strong>
+        {% endif %}
+    </p>
 
-            <hr>
+    <hr>
 
-            <form method="POST" class="form">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Starter</th>
-                                <th>Points (0-{{ exercise.max_points }})</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for starter in starters %}
-                            <tr>
-                                <td>
-                                    <strong>
-                                        {% if starter.person %}
-                                            {{ starter.person.given_name }} {{ starter.person.family_name }}
-                                        {% endif %}
-                                        {% if starter.dog %}
-                                            ({{ starter.dog.name }})
-                                        {% endif %}
-                                    </strong>
-                                </td>
-                                <td>
-                                    <input type="number" 
-                                           class="form-control" 
-                                           name="points_{{ starter.id }}"
-                                           value="{{ point_entries.get(starter.id).points if point_entries.get(starter.id) else '' }}"
-                                           min="0" 
-                                           max="{{ exercise.max_points }}"
-                                           style="width: 120px;">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" 
-                                              name="notes_{{ starter.id }}"
-                                              rows="1"
-                                              placeholder="Optional notes">{{ point_entries.get(starter.id).notes if point_entries.get(starter.id) else '' }}</textarea>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <form method="POST" class="form">
+        {% call data_table(['Starter', 'Points (0-' + exercise.max_points|string + ')', 'Notes']) %}
+            {% for starter in starters %}
+            <tr>
+                <td>
+                    <strong>
+                        {% if starter.person %}
+                            {{ starter.person.given_name }} {{ starter.person.family_name }}
+                        {% endif %}
+                        {% if starter.dog %}
+                            <br><small>({{ starter.dog.name }})</small>
+                        {% endif %}
+                    </strong>
+                </td>
+                <td style="width: 120px;">
+                    <input type="number" 
+                           class="form-control" 
+                           name="points_{{ starter.id }}"
+                           value="{{ point_entries.get(starter.id).points if point_entries.get(starter.id) else '' }}"
+                           min="0" 
+                           max="{{ exercise.max_points }}">
+                </td>
+                <td>
+                    <textarea class="form-control" 
+                              name="notes_{{ starter.id }}"
+                              rows="1"
+                              placeholder="Optional notes">{{ point_entries.get(starter.id).notes if point_entries.get(starter.id) else '' }}</textarea>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endcall %}
 
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">Save Points</button>
-                    <a href="{{ url_for('exercises.wt_exercises', competition_id=exercise.competition_id) }}" class="btn btn-secondary">
-                        Back to Exercises
-                    </a>
-                </div>
-            </form>
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Save Points</button>
+            <a href="{{ url_for('exercises.wt_exercises', competition_id=exercise.competition_id) }}" class="btn btn-secondary">
+                Back to Exercises
+            </a>
         </div>
-    </div>
+    </form>
 </div>
 {% endblock %}
