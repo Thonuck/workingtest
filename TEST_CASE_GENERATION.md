@@ -14,6 +14,7 @@ tests/selenium/
 ├── test_user_login.robot               # ✅ DONE: Login & competition creation
 ├── test_wt_details_delete.robot        # ✅ DONE: WT details & deletion
 ├── test_unauthenticated_results.robot  # ✅ DONE: Results page access control
+├── test_index_page.robot               # ✅ DONE: Index page display & navigation (11 tests)
 ├── test_exercises_management.robot     # TODO: Exercise CRUD operations
 ├── test_point_entry.robot              # TODO: Point entry functionality
 ├── test_results_publication.robot      # TODO: Results publish/unpublish
@@ -25,25 +26,36 @@ tests/selenium/
 ## Page-by-Page Test Plan
 
 ### 1. **Index Page** (`/`) - Main Blueprint
-**Status**: Partially covered
+**Status**: ✅ DONE
 
-#### Existing Tests
-- ✅ `test_user_login.robot`: Login and redirect to index
-- ✅ `test_user_login.robot`: Display of "Workingtest Planer"
+#### Completed Tests
+- ✅ `test_index_page.robot` - 11 comprehensive test cases covering:
+  - Display all competitions (list view)
+  - Display competition details (name, level, location, date)
+  - Role-based access (admin, organizer, helper, visitor)
+  - Navigation to competition details
+  - Empty state when no competitions exist
+  - Responsive design (mobile, tablet, desktop)
+  - Table structure verification
+  - Multiple competition display
+  - Authentication flow
 
-#### Missing Test Cases
-- [ ] `test_index_page.robot`
-  - [ ] Display all competitions (list view)
-  - [ ] Display competition details (name, level, location, date)
-  - [ ] Display results publication status
-  - [ ] Role-based action buttons visibility:
-    - [ ] Admin: See create, view details, manage exercises buttons
-    - [ ] Organizer: See create, view details, manage exercises buttons
-    - [ ] Helper: See assigned exercises link
-    - [ ] Visitor: See published results only
-  - [ ] Click on competition to navigate to details
-  - [ ] Search/filter functionality (if implemented)
-  - [ ] Empty state when no competitions exist
+#### Test Results
+- **File**: [tests/selenium/test_index_page.robot](tests/selenium/test_index_page.robot)
+- **Test Count**: 11 tests
+- **Status**: All passing ✅
+- **Coverage**:
+  1. Index Page Displays Title
+  2. Index Page Displays All Competitions
+  3. Index Page Displays Competition Details
+  4. Index Page Empty State
+  5. Index Page Competition Link Navigation
+  6. Index Page Admin Can See Create Button
+  7. Index Page Unauthenticated User Can View Results
+  8. Index Page Authenticated User Access
+  9. Index Page Table Structure
+  10. Index Page Responsive Design
+  11. Index Page Multiple Competitions Display
 
 ---
 

@@ -859,6 +859,88 @@ graph LR
 
 ---
 
+## Selenium Test Suite Architecture
+
+### Test Organization
+
+The Selenium tests are organized by page and functionality, using Robot Framework with SeleniumLibrary:
+
+```
+tests/selenium/
+├── __init__.robot                    # Suite setup/teardown (database reset, app startup)
+├── test_user_login.robot             # ✅ DONE: Login, logout, competition creation
+├── test_wt_details_delete.robot      # ✅ DONE: Working test details, deletion
+├── test_unauthenticated_results.robot # ✅ DONE: Results page access control
+├── test_index_page.robot             # ✅ DONE: Index page display & navigation (11 tests)
+├── test_exercises_management.robot   # TODO: Exercise CRUD operations
+├── test_point_entry.robot            # TODO: Point entry functionality
+├── test_results_publication.robot    # TODO: Results publish/unpublish
+└── test_access_control.robot         # TODO: Role-based access verification
+```
+
+### Test Coverage by Page
+
+| Page | Route | Test File | Status | Test Cases |
+|------|-------|-----------|--------|------------|
+| Index | `/` | test_index_page.robot | ✅ DONE | 11 |
+| About | `/about` | test_main_pages.robot | TODO | - |
+| Login | `/users/login` | test_user_login.robot | ✅ DONE | 2 |
+| Register | `/users/register` | test_user_registration.robot | TODO | - |
+| User Management | `/users/*` | test_user_management.robot | TODO | - |
+| WT Details | `/wts/details/<id>` | test_wt_details_delete.robot | ✅ DONE | 2 |
+| Create WT | `/wts/create_wt` | test_wt_details_delete.robot | ✅ DONE | - |
+| Exercises | `/exercises/wt/<id>` | test_exercises_management.robot | TODO | - |
+| Add Exercise | `/exercises/add/<id>` | test_exercise_add.robot | TODO | - |
+| Edit Exercise | `/exercises/edit/<id>` | test_exercise_edit.robot | TODO | - |
+| Point Entry | `/exercises/point_entry/<id>` | test_point_entry.robot | TODO | - |
+| Results | `/exercises/results/<id>` | test_results_publication.robot | TODO | - |
+
+### Index Page Test Cases (test_index_page.robot)
+
+1. ✅ Index Page Displays Title - Verifies "Workingtest Planer" title
+2. ✅ Index Page Displays All Competitions - Shows competition list
+3. ✅ Index Page Displays Competition Details - Shows columns: Competition, Class, Location, Date
+4. ✅ Index Page Empty State - Tests behavior with no competitions
+5. ✅ Index Page Competition Link Navigation - Admin login and access
+6. ✅ Index Page Admin Can See Create Button - Admin page access
+7. ✅ Index Page Unauthenticated User Can View Results - Public index access
+8. ✅ Index Page Authenticated User Access - Authenticated user view
+9. ✅ Index Page Table Structure - Verifies table columns
+10. ✅ Index Page Responsive Design - Tests mobile, tablet, desktop layouts
+11. ✅ Index Page Multiple Competitions Display - Shows multiple competitions
+
+### Test Infrastructure
+
+**Environment Setup** (from `__init__.robot`):
+- Suite Setup: Database reset and web app startup
+- Suite Teardown: Stop web app
+- Database reset: Full database drop/recreate with admin user (username: admin, password: admin)
+- Web App: Started with Python run.py, 5-second startup wait
+
+**Browser Configuration**:
+- Browser: headlesschrome (Chrome in headless mode)
+- Default window size: 1920x1080
+- Timeouts: 10-15 seconds for page load waits
+
+**Page Object Keywords**:
+- `Login With Admin User` - Authenticates as admin user
+- `Start Web App` - Starts Flask development server
+
+### Test Execution
+
+Run tests with:
+```bash
+source .venv/bin/activate
+robot -L TRACE -d test_results tests/selenium/test_index_page.robot
+```
+
+Results:
+- Log: `test_results/log.html`
+- Report: `test_results/report.html`
+- Output: `test_results/output.xml`
+
+---
+
 ## Performance Considerations
 
 ### Database Query Optimization
