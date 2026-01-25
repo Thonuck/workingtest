@@ -34,10 +34,12 @@ def create_app(config=None):
         from app.blueprints.main import bp as main_bp
         from app.blueprints.wts import bp as wts_bp
         from app.blueprints.exercises import bp as exercises_bp
+        from app.blueprints.starters import bp as starters_bp
         app.register_blueprint(users_bp)
         app.register_blueprint(main_bp)
         app.register_blueprint(wts_bp)
         app.register_blueprint(exercises_bp)
+        app.register_blueprint(starters_bp)
         
         db.create_all()
 
