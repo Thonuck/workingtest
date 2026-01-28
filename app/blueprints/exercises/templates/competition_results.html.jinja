@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% from "macros.html" import page_header, data_table, status_badge, ranking_badge, empty_state %}
+{% extends "base.html.jinja" %}
+{% from "macros.html.jinja" import page_header, data_table, status_badge, ranking_badge, empty_state %}
 
 {% block title %}Results - {{ competition.name }}{% endblock %}
 

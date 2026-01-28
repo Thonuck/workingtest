@@ -19,20 +19,8 @@ def starters(competition_id):
     exercises = Exercise.query.filter_by(competition_id=competition_id).all()
     starters = Starter.query.filter_by(competition_id=competition_id).all()
 
-    if request.method == 'POST':
-        starter_name = request.form.get('starter_name')
-        if not starter_name:
-            flash('Bitte geben Sie einen Namen für den Starter ein.', 'danger')
-            return redirect(url_for('starters.starters', competition_id=competition_id))
-
-        new_starter = Starter(name=starter_name, competition_id=competition_id)
-        db.session.add(new_starter)
-        db.session.commit()
-        flash(f'Starter "{starter_name}" wurde hinzugefügt.', 'success')
-        return redirect(url_for('starters.starters', competition_id=competition_id))
-
     return render_template(
-        'starters/starters.html',
+        'starters/starters.html.jinja',
         competition=competition,
         exercises=exercises,
         starters=starters
