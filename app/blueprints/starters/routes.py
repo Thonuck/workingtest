@@ -1,24 +1,13 @@
 
 from flask import render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
-from functools import wraps
 from app.blueprints.starters import bp
 from app import db
 from app.models import (
     User, Competition, Exercise, ExercisePointEntry, 
     ExerciseResult, Starter, CompetitionResult
 )
-
-
-def roles_required(roles):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not current_user.is_authenticated or current_user.role not in roles:
-                abort(403)
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+from app.decorators import roles_required
 
 
 # ==================== WT STARTER PAGE ====================

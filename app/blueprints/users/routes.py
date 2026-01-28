@@ -1,19 +1,9 @@
 from flask import render_template, redirect, url_for, flash, request, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from functools import wraps
 from app.blueprints.users import bp
 from app import db
 from app.models import User
-
-def roles_required(roles):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not current_user.is_authenticated or current_user.role not in roles:
-                abort(403)
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+from app.decorators import roles_required
 
 @bp.route('/set-role/<int:user_id>/<role>')
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
