@@ -2,7 +2,7 @@
 {% from "macros.html" import form_card, form_input, form_select %}
 
 {% block content %}
-{% call form_card('Neuen WR erstellen', show_flash=false) %}
+{% call form_card('Neuen WR erstellen', show_flash=true) %}
     <form method="POST">
         {{ form_input('name', label='Name', placeholder='Workingtest Name', required=true) }}
         {{ form_select('level', 'Klasse', [('A', 'A'), ('F', 'F'), ('O', 'O')], required=true) }}

@@ -60,6 +60,8 @@ def dashboard():
     return f'Willkommen {current_user.username}!'
 
 @bp.route('/')
+@login_required
+@roles_required(['admin', 'organizer'])
 def list_users():
     users = User.query.all()
     return render_template('list.html', users=users)
