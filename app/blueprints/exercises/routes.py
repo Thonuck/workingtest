@@ -34,7 +34,7 @@ def wt_exercises(competition_id):
         abort(403)
     
     return render_template(
-        'wt_exercises.html',
+        'wt_exercises.html.jinja',
         competition=competition,
         exercises=exercises
     )
@@ -55,16 +55,16 @@ def add_exercise(competition_id):
         
         if not name:
             flash('Exercise name is required.', 'danger')
-            return render_template('add_exercise.html', competition=competition, users=User.query.all())
+            return render_template('add_exercise.html.jinja', competition=competition, users=User.query.all())
         
         # Validate users exist if assigned
         if judge_id and not User.query.get(judge_id):
             flash('Selected judge does not exist.', 'danger')
-            return render_template('add_exercise.html', competition=competition, users=User.query.all())
+            return render_template('add_exercise.html.jinja', competition=competition, users=User.query.all())
         
         if helper_id and not User.query.get(helper_id):
             flash('Selected helper does not exist.', 'danger')
-            return render_template('add_exercise.html', competition=competition, users=User.query.all())
+            return render_template('add_exercise.html.jinja', competition=competition, users=User.query.all())
         
         exercise = Exercise(
             name=name,
@@ -81,7 +81,7 @@ def add_exercise(competition_id):
         return redirect(url_for('exercises.wt_exercises', competition_id=competition_id))
     
     users = User.query.all()
-    return render_template('add_exercise.html', competition=competition, users=users)
+    return render_template('add_exercise.html.jinja', competition=competition, users=users)
 
 
 @bp.route('/edit/<int:exercise_id>', methods=['GET', 'POST'])
@@ -106,7 +106,7 @@ def edit_exercise(exercise_id):
         return redirect(url_for('exercises.wt_exercises', competition_id=exercise.competition_id))
     
     users = User.query.all()
-    return render_template('edit_exercise.html', exercise=exercise, users=users)
+    return render_template('edit_exercise.html.jinja', exercise=exercise, users=users)
 
 
 @bp.route('/delete/<int:exercise_id>', methods=['POST'])
@@ -192,7 +192,7 @@ def exercise_point_entry(exercise_id):
     }
     
     return render_template(
-        'exercise_point_entry.html',
+        'exercise_point_entry.html.jinja',
         exercise=exercise,
         starters=starters,
         point_entries=point_entries
@@ -257,7 +257,7 @@ def competition_results(competition_id):
             }
     
     return render_template(
-        'competition_results.html',
+        'competition_results.html.jinja',
         competition=competition,
         exercises=exercises,
         starter_results=starter_results,

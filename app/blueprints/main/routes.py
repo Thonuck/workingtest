@@ -19,12 +19,12 @@ def index():
             'results_published': is_published
         })
     
-    return render_template('index.html', competitions=competitions)
+    return render_template('index.html.jinja', competitions=competitions)
 
 
 @bp.route('/about')
 def about():
-    return render_template("about.html")
+    return render_template("about.html.jinja")
 
 
 @bp.route('/new_working_test', methods=['GET', 'POST'])
@@ -43,7 +43,7 @@ def new_working_test():
 
         if existing_competition:
             logger.info(f"Competition already exists: {competition_details['name']}")
-            return render_template("new_working_test.html", title="Neuer Working Test", error="Wettbewerb existiert bereits.")
+            return render_template("new_working_test.html.jinja", title="Neuer Working Test", error="Wettbewerb existiert bereits.")
 
         new_competition = Competition(name=competition_details["name"],
                                       level=competition_details["class"],
@@ -56,4 +56,4 @@ def new_working_test():
         # return render_template("index.html")
         return redirect(url_for('main.index'))
  
-    return render_template("new_working_test.html", title="Neuer Working Test")
+    return render_template("new_working_test.html.jinja", title="Neuer Working Test")

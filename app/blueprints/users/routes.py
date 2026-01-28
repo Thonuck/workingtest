@@ -32,7 +32,7 @@ def register():
         db.session.commit()
         flash('Registrierung erfolgreich! Bitte logge dich ein.')
         return redirect(url_for('users.login'))
-    return render_template('register.html')
+    return render_template('register.html.jinja')
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -45,7 +45,7 @@ def login():
             flash('Login erfolgreich!')
             return redirect(url_for('main.index'))
         flash('Ungültiger Benutzername oder Passwort.')
-    return render_template('login.html')
+    return render_template('login.html.jinja')
 
 @bp.route('/logout')
 @login_required
@@ -64,7 +64,7 @@ def dashboard():
 @roles_required(['admin', 'organizer'])
 def list_users():
     users = User.query.all()
-    return render_template('list.html', users=users)
+    return render_template('list.html.jinja', users=users)
 
 @bp.route('/<int:user_id>/edit', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -77,7 +77,7 @@ def edit_user(user_id):
         db.session.commit()
         return redirect(url_for('users.list_users'))
     
-    return render_template('edit.html', user=user)
+    return render_template('edit.html.jinja', user=user)
 
 @bp.route('/<int:user_id>/delete', methods=['POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -90,4 +90,4 @@ def delete_user(user_id):
 @bp.route('/<int:user_id>/detail')
 def detail(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template('detail.html', user=user)
+    return render_template('detail.html.jinja', user=user)

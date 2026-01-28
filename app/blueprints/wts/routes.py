@@ -9,7 +9,7 @@ from app.decorators import roles_required
 @bp.route('/wts/details/<int:competition_id>')
 def wt_details(competition_id):
     competition = Competition.query.get_or_404(competition_id)
-    return render_template('wt_details.html', competition=competition)
+    return render_template('wt_details.html.jinja', competition=competition)
 
 @bp.route('/create_wt', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -22,19 +22,19 @@ def create_wt():
 
         if not name or not level or not location or not date_str:
             flash('Bitte alle Felder ausfüllen.', 'danger')
-            return render_template('create_wt.html')
+            return render_template('create_wt.html.jinja')
 
         try:
             comp_date = dt_date.fromisoformat(date_str)
         except ValueError:
             flash('Ungültiges Datum. Bitte im Format YYYY-MM-DD eingeben.', 'danger')
-            return render_template('create_wt.html')
+            return render_template('create_wt.html.jinja')
 
         # Optional: Duplikate vermeiden (Name + Klasse)
         existing = Competition.query.filter_by(name=name, level=level).first()
         if existing:
             flash('Wettbewerb existiert bereits für diese Klasse.', 'warning')
-            return render_template('create_wt.html')
+            return render_template('create_wt.html.jinja')
 
         competition = Competition(name=name, level=level, location=location, date=comp_date)
         db.session.add(competition)
@@ -42,7 +42,7 @@ def create_wt():
         flash('Workingtest erfolgreich erstellt.', 'success')
         return redirect(url_for('main.index'))
 
-    return render_template("create_wt.html")
+    return render_template("create_wt.html.jinja")
 
 @bp.route('/delete_wt/<int:competition_id>', methods=['POST'])
 @login_required
