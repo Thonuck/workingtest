@@ -4,5 +4,20 @@
 
 {% block content %}
 <div class="container mt-4">
+
+    <h1 class="mb-4">Starters</h1>
+    <div class="row">
+        {% for starter in starters %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ starter.image_url }}" class="card-img-top" alt="{{ starter.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ starter.name }}</h5>
+                    <p class="card-text">{{ starter.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock 
