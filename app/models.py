@@ -42,6 +42,15 @@ class Dog(db.Model):
     breed = db.Column(db.String(100), nullable=False)
     kennel = db.Column(db.String(100), nullable=True)
 
+class WtStarter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    starter_nummer = db.Column(db.String(5), nullable=False)
+    vorname = db.Column(db.String(100), nullable=False)
+    nachname = db.Column(db.String(100), nullable=False)
+    hundename = db.Column(db.String(100), nullable=False)
+    rasse = db.Column(db.String(100), nullable=False)
+
+
 # Starter model
 class Starter(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)

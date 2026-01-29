@@ -1,4 +1,3 @@
-
 from flask import render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from app.blueprints.starters import bp
