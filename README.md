@@ -60,6 +60,391 @@ Falls Produktionsdaten erhalten bleiben müssen, kontaktieren Sie den Projektbet
 
 ---
 
+## Template Macros Documentation
+
+### Overview
+
+The application provides a comprehensive set of Jinja2 macros for building consistent, responsive UI components. Macros are organized into five categories:
+
+1. **Layout Macros** - Page structure and headers
+2. **Form Macros** - Form components and inputs
+3. **Table Macros** - Data tables and table components
+4. **UI Component Macros** - Buttons, badges, alerts, etc.
+5. **Legacy Macros** - Deprecated macros for backward compatibility
+
+### Quick Start
+
+Import macros from their respective files:
+
+```jinja
+{% from "macros/layout.html.jinja" import page_header %}
+{% from "macros/forms.html.jinja" import form_section, input_field %}
+{% from "macros/tables.html.jinja" import data_table, table_row %}
+{% from "macros/ui.html.jinja" import alert_box, status_badge %}
+```
+
+Or use the unified macros file:
+
+```jinja
+{% from "macros.html.jinja" import page_header, form_section, data_table %}
+```
+
+---
+
+### 1. Layout Macros
+
+#### `page_header(title, subtitle='', level='', location='', date='')`
+
+Creates a page header with title, optional subtitle, and metadata.
+
+**Example - Simple header:**
+```jinja
+{% from "macros/layout.html.jinja" import page_header %}
+{{ page_header(title="Competition Results") }}
+```
+
+**Example - Header with metadata:**
+```jinja
+{{ page_header(
+    title="Working Test 2024",
+    subtitle="Annual Dog Competition",
+    level="Advanced (F)",
+    location="Berlin",
+    date="2024-03-15"
+) }}
+```
+
+**Example - Header with action buttons:**
+```jinja
+{% call page_header(title="My Competitions") %}
+    <a href="{{ url_for('wts.create') }}" class="btn btn-primary">Create New</a>
+{% endcall %}
+```
+
+---
+
+### 2. Form Macros
+
+#### `form_section(title, action_url='', method='POST', submit_label='Submit', cancel_url='', show_flash=true)`
+
+Creates a centered form container with title, flash messages, and buttons.
+
+**Example:**
+```jinja
+{% from "macros/forms.html.jinja" import form_section, input_field, select_field %}
+
+{% call form_section(
+    title="Create Competition",
+    action_url=url_for('wts.create'),
+    submit_label="Create",
+    cancel_url=url_for('wts.index')
+) %}
+    {{ input_field(name="name", label="Competition Name", required=true) }}
+    {{ input_field(name="location", label="Location", required=true) }}
+    {{ input_field(name="date", label="Date", type="date", required=true) }}
+    {{ select_field(
+        name="level",
+        label="Level",
+        options=[('A', 'Beginner'), ('F', 'Advanced'), ('O', 'Open')],
+        required=true
+    ) }}
+{% endcall %}
+```
+
+#### `input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='')`
+
+Creates a Bootstrap 5 styled input field.
+
+**Examples:**
+```jinja
+{# Text input #}
+{{ input_field(name="email", label="Email", type="email", required=true) }}
+
+{# Number input with constraints #}
+{{ input_field(
+    name="score",
+    label="Score",
+    type="number",
+    min=0,
+    max=20,
+    placeholder="Enter score (0-20)"
+) }}
+
+{# Date input #}
+{{ input_field(name="date", label="Competition Date", type="date", value="2024-03-15") }}
+```
+
+#### `select_field(name, label, options, selected='', required=false, empty_option='-- Select --')`
+
+Creates a dropdown select field.
+
+**Example:**
+```jinja
+{{ select_field(
+    name="helper_id",
+    label="Assign Helper",
+    options=[(h.id, h.name) for h in helpers],
+    selected=exercise.helper_id,
+    required=true
+) }}
+```
+
+#### `textarea_field(name, label, value='', placeholder='', required=false, rows=3)`
+
+Creates a multi-line text input.
+
+**Example:**
+```jinja
+{{ textarea_field(
+    name="description",
+    label="Competition Description",
+    placeholder="Enter a detailed description...",
+    rows=5
+) }}
+```
+
+---
+
+### 3. Table Macros
+
+#### `data_table(headers=[])`
+
+Creates a responsive Bootstrap table with striped rows and dark header.
+
+**Example - Basic table:**
+```jinja
+{% from "macros/tables.html.jinja" import data_table %}
+
+{% call data_table(headers=["Name", "Level", "Location", "Date"]) %}
+    {% for comp in competitions %}
+    <tr>
+        <td>{{ comp.name }}</td>
+        <td>{{ comp.level }}</td>
+        <td>{{ comp.location }}</td>
+        <td>{{ comp.date }}</td>
+    </tr>
+    {% endfor %}
+{% endcall %}
+```
+
+#### `table_row(url)`
+
+Makes an entire table row clickable.
+
+**Example - Table with clickable rows:**
+```jinja
+{% from "macros/tables.html.jinja" import data_table, table_row %}
+
+{% call data_table(headers=["Competition", "Date", "Status"]) %}
+    {% for comp in competitions %}
+        {% call table_row(url=url_for('wts.wt_details', competition_id=comp.id)) %}
+            <td>{{ comp.name }}</td>
+            <td>{{ comp.date }}</td>
+            <td>{{ comp.status }}</td>
+        {% endcall %}
+    {% endfor %}
+{% endcall %}
+```
+
+#### `action_buttons(buttons=[])`
+
+Creates a button group for table row actions.
+
+**Example:**
+```jinja
+{% from "macros/tables.html.jinja" import data_table, action_buttons %}
+
+{% call data_table(headers=["Exercise", "Helper", "Actions"]) %}
+    {% for exercise in exercises %}
+    <tr>
+        <td>{{ exercise.name }}</td>
+        <td>{{ exercise.helper.name }}</td>
+        <td>
+            {{ action_buttons([
+                {
+                    'type': 'link',
+                    'label': 'Edit',
+                    'url': url_for('exercises.edit', id=exercise.id),
+                    'style': 'info'
+                },
+                {
+                    'type': 'submit',
+                    'label': 'Delete',
+                    'url': url_for('exercises.delete', id=exercise.id),
+                    'style': 'danger',
+                    'confirm': 'Delete this exercise?'
+                }
+            ]) }}
+        </td>
+    </tr>
+    {% endfor %}
+{% endcall %}
+```
+
+---
+
+### 4. UI Component Macros
+
+#### `flash_messages()`
+
+Displays Flask flash messages with Bootstrap alert styling.
+
+**Example:**
+```jinja
+{% from "macros/ui.html.jinja" import flash_messages %}
+{{ flash_messages() }}
+```
+
+#### `alert_box(message, type='info', title='')`
+
+Creates a Bootstrap alert box.
+
+**Examples:**
+```jinja
+{% from "macros/ui.html.jinja" import alert_box %}
+
+{# Success message #}
+{{ alert_box(message="Competition created successfully!", type="success") }}
+
+{# Warning with title #}
+{{ alert_box(
+    title="Important Notice",
+    message="The competition deadline is approaching.",
+    type="warning"
+) }}
+```
+
+#### `empty_state(title, message, action_url='', action_label='')`
+
+Shows a message when no data is available.
+
+**Examples:**
+```jinja
+{% from "macros/ui.html.jinja" import empty_state %}
+
+{# Simple empty state #}
+{{ empty_state(
+    title="No Competitions Found",
+    message="There are currently no competitions scheduled."
+) }}
+
+{# With action button #}
+{{ empty_state(
+    title="No Exercises Assigned",
+    message="This competition has no exercises yet.",
+    action_url=url_for('exercises.create', competition_id=comp.id),
+    action_label="Create First Exercise"
+) }}
+```
+
+#### `button_group(buttons=[])`
+
+Creates a horizontal group of buttons.
+
+**Example:**
+```jinja
+{% from "macros/ui.html.jinja" import button_group %}
+
+{{ button_group([
+    {'type': 'link', 'label': 'Back', 'url': url_for('wts.index'), 'style': 'secondary'},
+    {'type': 'link', 'label': 'Edit', 'url': url_for('wts.edit', id=comp.id), 'style': 'primary'},
+    {
+        'type': 'form',
+        'label': 'Delete',
+        'url': url_for('wts.delete', id=comp.id),
+        'style': 'danger',
+        'confirm': 'Are you sure?'
+    }
+]) }}
+```
+
+#### `status_badge(published, published_label='Published', unpublished_label='Not Published')`
+
+Displays a colored status badge.
+
+**Examples:**
+```jinja
+{% from "macros/ui.html.jinja" import status_badge %}
+
+{{ status_badge(published=competition.is_published) }}
+
+{# Custom labels #}
+{{ status_badge(
+    published=user.is_active,
+    published_label='Active',
+    unpublished_label='Inactive'
+) }}
+```
+
+#### `ranking_badge(rank)`
+
+Displays ranking with medal emojis for top 3 positions.
+
+**Example:**
+```jinja
+{% from "macros/ui.html.jinja" import ranking_badge %}
+
+<table>
+    <tr>
+        <td>{{ ranking_badge(rank=1) }}</td>  {# Shows: 🥇 1st #}
+        <td>Max & Bella</td>
+        <td>95 points</td>
+    </tr>
+    <tr>
+        <td>{{ ranking_badge(rank=2) }}</td>  {# Shows: 🥈 2nd #}
+        <td>Anna & Rex</td>
+        <td>89 points</td>
+    </tr>
+</table>
+```
+
+---
+
+### Complete Page Example
+
+Here's a complete example combining multiple macros:
+
+```jinja
+{% extends "base.html" %}
+{% from "macros/layout.html.jinja" import page_header %}
+{% from "macros/tables.html.jinja" import data_table, table_row, action_buttons %}
+{% from "macros/ui.html.jinja" import empty_state, status_badge %}
+
+{% block content %}
+{% call page_header(title="Competitions", subtitle="Manage all competitions") %}
+    <a href="{{ url_for('wts.create') }}" class="btn btn-primary">Create New</a>
+{% endcall %}
+
+{% if competitions %}
+    {% call data_table(headers=["Name", "Level", "Date", "Status", "Actions"]) %}
+        {% for comp in competitions %}
+            <tr>
+                <td>{{ comp.name }}</td>
+                <td>{{ comp.level }}</td>
+                <td>{{ comp.date }}</td>
+                <td>{{ status_badge(published=comp.is_published) }}</td>
+                <td>
+                    {{ action_buttons([
+                        {'type': 'link', 'label': 'View', 'url': url_for('wts.detail', id=comp.id), 'style': 'info'},
+                        {'type': 'link', 'label': 'Edit', 'url': url_for('wts.edit', id=comp.id), 'style': 'primary'}
+                    ]) }}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endcall %}
+{% else %}
+    {{ empty_state(
+        title="No Competitions Yet",
+        message="Get started by creating your first competition.",
+        action_url=url_for('wts.create'),
+        action_label="Create Competition"
+    ) }}
+{% endif %}
+{% endblock %}
+```
+
+---
+
 ## Frontend Development Guidelines
 
 ### Responsive Design Best Practices

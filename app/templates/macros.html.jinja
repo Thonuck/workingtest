@@ -1,4 +1,21 @@
-{# Macro: Page Header with Title and Subtitle #}
+{# ============================================================================ #}
+{# MACROS - ORGANIZED TEMPLATE MACROS                                         #}
+{# ============================================================================ #}
+{# This file contains all template macros organized by category.              #}
+{# Categories:                                                                 #}
+{#   1. Layout Macros      - Page structure and headers                       #}
+{#   2. Form Macros        - Form components and inputs                       #}
+{#   3. Table Macros       - Data tables and table components                 #}
+{#   4. UI Component Macros - Buttons, badges, alerts, etc.                   #}
+{#   5. Legacy Macros      - Deprecated macros for backward compatibility     #}
+{# ============================================================================ #}
+
+
+{# ============================================================================ #}
+{# 1. LAYOUT MACROS                                                            #}
+{# ============================================================================ #}
+
+{# Page Header with Title, Subtitle, and Optional Metadata #}
 {% macro page_header(title, subtitle='', level='', location='', date='') %}
 <div class="row mb-4">
     <div class="col-md-8">
@@ -22,81 +39,12 @@
 </div>
 {% endmacro %}
 
-{# Macro: Centered Form Card (legacy - used by users blueprint) #}
-{% macro form_card(title, show_flash=true) %}
-<div class="row mt-5">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">{{ title }}</h1>
-                
-                {% if show_flash %}
-                    {{ flash_messages() }}
-                {% endif %}
-                
-                {{ caller() }}
-            </div>
-        </div>
-    </div>
-</div>
-{% endmacro %}
 
-{# Macro: Legacy Form Input Field #}
-{% macro form_input(name, label=none, type='text', placeholder='', required=false, value='') %}
-<div class="form-group mb-3">
-    {% if label %}
-        <label>{{ label }}</label>
-    {% endif %}
-    <input 
-        type="{{ type }}" 
-        name="{{ name }}" 
-        class="form-control" 
-        placeholder="{{ placeholder }}"
-        {% if value %}value="{{ value }}"{% endif %}
-        {% if required %}required{% endif %}
-    >
-</div>
-{% endmacro %}
+{# ============================================================================ #}
+{# 2. FORM MACROS                                                              #}
+{# ============================================================================ #}
 
-{# Macro: Legacy Form Select Field #}
-{% macro form_select(name, label, options, selected='', required=false) %}
-<div class="form-group mb-3">
-    <label>{{ label }}</label>
-    <select name="{{ name }}" class="form-control" {% if required %}required{% endif %}>
-        {% for value, text in options %}
-            <option value="{{ value }}" {% if value == selected %}selected{% endif %}>
-                {{ text }}
-            </option>
-        {% endfor %}
-    </select>
-</div>
-{% endmacro %}
-
-{# Macro: Button Group #}
-{% macro button_group(buttons=[]) %}
-<div class="d-flex gap-2">
-    {% for button in buttons %}
-        {% if button.type == 'submit' %}
-        <button type="submit" class="btn btn-{{ button.style|default('primary') }}">
-            {{ button.label }}
-        </button>
-        {% elif button.type == 'link' %}
-        <a href="{{ button.url }}" class="btn btn-{{ button.style|default('secondary') }}">
-            {{ button.label }}
-        </a>
-        {% elif button.type == 'form' %}
-        <form method="POST" action="{{ button.url }}" style="display:inline;" {% if button.confirm %}onsubmit="return confirm('{{ button.confirm }}');"{% endif %}>
-            <button type="submit" class="btn btn-{{ button.style|default('danger') }}">
-                {{ button.label }}
-            </button>
-        </form>
-        {% endif %}
-    {% endfor %}
-    {{ caller() if caller }}
-</div>
-{% endmacro %}
-
-{# Macro: Form with Bootstrap Layout #}
+{# Form Section with Bootstrap Layout - Modern form container #}
 {% macro form_section(title, action_url='', method='POST', submit_label='Submit', cancel_url='', show_flash=true) %}
 <div class="container mt-4">
     <div class="row">
@@ -122,7 +70,7 @@
 </div>
 {% endmacro %}
 
-{# Macro: Form Input Field with Bootstrap classes #}
+{# Form Input Field with Bootstrap 5 classes #}
 {% macro input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='') %}
 <div class="mb-3">
     <label for="{{ name }}" class="form-label">{{ label }}{% if required %} *{% endif %}</label>
@@ -140,7 +88,7 @@
 </div>
 {% endmacro %}
 
-{# Macro: Form Select Field with Bootstrap classes #}
+{# Form Select Field with Bootstrap 5 classes #}
 {% macro select_field(name, label, options, selected='', required=false, empty_option='-- Select --') %}
 <div class="mb-3">
     <label for="{{ name }}" class="form-label">{{ label }}</label>
@@ -157,7 +105,7 @@
 </div>
 {% endmacro %}
 
-{# Macro: Form Textarea Field #}
+{# Form Textarea Field with Bootstrap 5 classes #}
 {% macro textarea_field(name, label, value='', placeholder='', required=false, rows=3) %}
 <div class="mb-3">
     <label for="{{ name }}" class="form-label">{{ label }}</label>
@@ -172,26 +120,12 @@
 </div>
 {% endmacro %}
 
-{# Macro: Alert Box #}
-{% macro alert_box(message, type='info', title='') %}
-<div class="alert alert-{{ type }}" role="alert">
-    {% if title %}<strong>{{ title }}</strong><br>{% endif %}
-    {{ message }}
-</div>
-{% endmacro %}
 
-{# Macro: Empty State Message #}
-{% macro empty_state(title, message, action_url='', action_label='') %}
-<div class="alert alert-info" role="alert">
-    <strong>{{ title }}</strong><br>
-    {{ message }}
-    {% if action_url %}
-    <br><a href="{{ action_url }}" class="alert-link">{{ action_label }}</a>
-    {% endif %}
-</div>
-{% endmacro %}
+{# ============================================================================ #}
+{# 3. TABLE MACROS                                                             #}
+{# ============================================================================ #}
 
-{# Macro: Table with Dark Header #}
+{# Data Table with Dark Header and Bootstrap styling #}
 {% macro data_table(headers=[]) %}
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -209,7 +143,14 @@
 </div>
 {% endmacro %}
 
-{# Macro: Action Buttons for Table Rows #}
+{# Clickable Table Row - Makes entire row clickable #}
+{% macro table_row(url) %}
+<tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
+    {{ caller() }}
+</tr>
+{% endmacro %}
+
+{# Action Buttons for Table Rows - Small button group for row actions #}
 {% macro action_buttons(buttons=[]) %}
 <div class="btn-group btn-group-sm" role="group">
     {% for btn in buttons %}
@@ -229,7 +170,128 @@
 </div>
 {% endmacro %}
 
-{# Macro: Badge with Status #}
+{# card layout for table data on small screens #}
+{% macro card_list(title_key, keys, items, details_route) %}
+    {% for item in items %}
+    <div class="card mb-3" onclick="window.location='{{ url_for(details_route, competition_id=item.id) }}'" style="cursor: pointer;">
+        <div class="card-body">
+            
+            <h5 class="card-title">{{ item[title_key] }}</h5>
+            <p class="card-text">
+                {% for key in keys %}
+                    <strong>{{ key }}:</strong> {{ item[key] }}<br>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro data_table(headers, items) %}
+
+    <div class="table-responsive">
+        {% call macros.table(headers) %}
+            {% for item in items %}
+                {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
+                    {% for header in headers %}
+                        <td>{{ items[header] }}</td>
+                    {% endfor %}
+                {% endcall %}
+            {% endfor %}
+        {% endcall %}
+    </div>
+{% endmacro %}
+
+{# Table Form with Responsive Cards - Used on main index page #}
+{% macro table_form(title, items, details_route, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {{ flash_messages() }}
+                {% endif %}
+                
+                <!-- Table for medium and larger screens -->
+                <div class="table-container d-none d-md-block">
+                    <!-- Table for larger screens -->
+                    {{ caller() }}
+                </div>
+                <div class="card-container d-block d-md-none">
+                    <!-- Cards for small screens -->
+                    {{ card_list(title_key='name',
+                                 keys=['level', 'location', 'date'],
+                                 items=items,
+                                 details_route=details_route) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+
+{# ============================================================================ #}
+{# 4. UI COMPONENT MACROS                                                      #}
+{# ============================================================================ #}
+
+{# Flash Messages Display - Shows Flask flash messages #}
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+{# Alert Box - General purpose alert component #}
+{% macro alert_box(message, type='info', title='') %}
+<div class="alert alert-{{ type }}" role="alert">
+    {% if title %}<strong>{{ title }}</strong><br>{% endif %}
+    {{ message }}
+</div>
+{% endmacro %}
+
+{# Empty State Message - Shows when no data is available #}
+{% macro empty_state(title, message, action_url='', action_label='') %}
+<div class="alert alert-info" role="alert">
+    <strong>{{ title }}</strong><br>
+    {{ message }}
+    {% if action_url %}
+    <br><a href="{{ action_url }}" class="alert-link">{{ action_label }}</a>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# Button Group - Horizontal group of buttons #}
+{% macro button_group(buttons=[]) %}
+<div class="d-flex gap-2">
+    {% for button in buttons %}
+        {% if button.type == 'submit' %}
+        <button type="submit" class="btn btn-{{ button.style|default('primary') }}">
+            {{ button.label }}
+        </button>
+        {% elif button.type == 'link' %}
+        <a href="{{ button.url }}" class="btn btn-{{ button.style|default('secondary') }}">
+            {{ button.label }}
+        </a>
+        {% elif button.type == 'form' %}
+        <form method="POST" action="{{ button.url }}" style="display:inline;" {% if button.confirm %}onsubmit="return confirm('{{ button.confirm }}');"{% endif %}>
+            <button type="submit" class="btn btn-{{ button.style|default('danger') }}">
+                {{ button.label }}
+            </button>
+        </form>
+        {% endif %}
+    {% endfor %}
+    {{ caller() if caller }}
+</div>
+{% endmacro %}
+
+{# Status Badge - Shows published/unpublished status #}
 {% macro status_badge(published, published_label='Published', unpublished_label='Not Published') %}
 {% if published %}
     <span class="badge bg-success">{{ published_label }}</span>
@@ -238,7 +300,7 @@
 {% endif %}
 {% endmacro %}
 
-{# Macro: Ranking Badge with Medal #}
+{# Ranking Badge with Medal Icons - Shows ranking with emoji medals #}
 {% macro ranking_badge(rank) %}
 {% if rank == 1 %}
     <span class="fw-bold">🥇 1st</span>
@@ -251,7 +313,68 @@
 {% endif %}
 {% endmacro %}
 
-{# Macro: Old-style Table (deprecated - use data_table instead) #}
+
+{# ============================================================================ #}
+{# 5. LEGACY MACROS - DEPRECATED                                               #}
+{# These macros are kept for backward compatibility with the users blueprint   #}
+{# New code should use the modern equivalents from sections above              #}
+{# ============================================================================ #}
+
+{# LEGACY: Centered Form Card (used by users blueprint) #}
+{# Use form_section() instead for new code #}
+{% macro form_card(title, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {{ flash_messages() }}
+                {% endif %}
+                
+                {{ caller() }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{# LEGACY: Form Input Field (used by users blueprint) #}
+{# Use input_field() instead for new code #}
+{% macro form_input(name, label=none, type='text', placeholder='', required=false, value='') %}
+<div class="form-group mb-3">
+    {% if label %}
+        <label>{{ label }}</label>
+    {% endif %}
+    <input 
+        type="{{ type }}" 
+        name="{{ name }}" 
+        class="form-control" 
+        placeholder="{{ placeholder }}"
+        {% if value %}value="{{ value }}"{% endif %}
+        {% if required %}required{% endif %}
+    >
+</div>
+{% endmacro %}
+
+{# LEGACY: Form Select Field (used by users blueprint) #}
+{# Use select_field() instead for new code #}
+{% macro form_select(name, label, options, selected='', required=false) %}
+<div class="form-group mb-3">
+    <label>{{ label }}</label>
+    <select name="{{ name }}" class="form-control" {% if required %}required{% endif %}>
+        {% for value, text in options %}
+            <option value="{{ value }}" {% if value == selected %}selected{% endif %}>
+                {{ text }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+{# LEGACY: Old-style Table (deprecated) #}
+{# Use data_table() instead for new code #}
 {% macro table(headers) %}
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -267,60 +390,4 @@
         </tbody>
     </table>
 </div>
-{% endmacro %}
-
-{# Macro: Clickable Table Row #}
-{% macro table_row(url) %}
-<tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
-    {{ caller() }}
-</tr>
-{% endmacro %}
-
-{# Macro: Table Form (for main index page) #}
-{% macro table_form(title, competitions, show_flash=true) %}
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">{{ title }}</h1>
-                
-                {% if show_flash %}
-                    {{ flash_messages() }}
-                {% endif %}
-                
-                <!-- Table for medium and larger screens -->
-                <div class="table-container d-none d-md-block">
-                    {{ caller() }}
-                </div>
-                
-                <!-- Cards for small screens -->
-                <div class="card-container d-block d-md-none">
-                    {% for competition in competitions %}
-                    <div class="card mb-3" onclick="window.location='{{ url_for('wts.wt_details', competition_id=competition.id) }}'" style="cursor: pointer;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ competition.name }}</h5>
-                            <p class="card-text">
-                                <strong>Level:</strong> {{ competition.level }}<br>
-                                <strong>Location:</strong> {{ competition.location }}<br>
-                                <strong>Date:</strong> {{ competition.date }}
-                            </p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endmacro %}
-
-{# Macro: Flash Messages Anzeige #}
-{% macro flash_messages() %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
 {% endmacro %}

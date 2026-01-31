@@ -1,0 +1,204 @@
+{# ============================================================================ #}
+{# FORM MACROS                                                                #}
+{# ============================================================================ #}
+
+{# Macro: Form Section with Bootstrap Layout
+   
+   Description: Creates a centered form container with title, flash messages, and action buttons.
+   
+   Parameters:
+     - title (required): Form heading
+     - action_url (optional): Form submission URL
+     - method (optional): HTTP method (default: 'POST')
+     - submit_label (optional): Submit button text (default: 'Submit')
+     - cancel_url (optional): Cancel button URL
+     - show_flash (optional): Display flash messages (default: true)
+   
+   Example:
+     {% from "macros/forms.html.jinja" import form_section, input_field %}
+     {% call form_section(
+         title="Create Competition",
+         action_url=url_for('wts.create'),
+         submit_label="Create",
+         cancel_url=url_for('wts.index')
+     ) %}
+         {{ input_field(name="name", label="Competition Name", required=true) }}
+         {{ input_field(name="location", label="Location", required=true) }}
+         {{ input_field(name="date", label="Date", type="date", required=true) }}
+     {% endcall %}
+#}
+{% macro form_section(title, action_url='', method='POST', submit_label='Submit', cancel_url='', show_flash=true) %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>{{ title }}</h1>
+            
+            {% if show_flash %}
+                {% from "macros/ui.html.jinja" import flash_messages %}
+                {{ flash_messages() }}
+            {% endif %}
+            
+            <form method="{{ method }}" action="{{ action_url }}" class="form">
+                {{ caller() }}
+                
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+                    {% if cancel_url %}
+                    <a href="{{ cancel_url }}" class="btn btn-secondary">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{# Macro: Form Input Field
+   
+   Description: Creates a Bootstrap 5 styled input field with label.
+   
+   Parameters:
+     - name (required): Input field name attribute
+     - label (required): Field label text
+     - value (optional): Initial value
+     - type (optional): Input type (default: 'text')
+     - required (optional): Mark as required (default: false)
+     - min (optional): Minimum value (for number/date types)
+     - max (optional): Maximum value (for number/date types)
+     - placeholder (optional): Placeholder text
+   
+   Example 1 - Basic text input:
+     {{ input_field(name="email", label="Email Address", type="email", required=true) }}
+   
+   Example 2 - Number input with constraints:
+     {{ input_field(
+         name="score",
+         label="Score",
+         type="number",
+         min=0,
+         max=20,
+         required=true,
+         placeholder="Enter score (0-20)"
+     ) }}
+   
+   Example 3 - Date input with value:
+     {{ input_field(
+         name="competition_date",
+         label="Competition Date",
+         type="date",
+         value="2024-03-15",
+         required=true
+     ) }}
+#}
+{% macro input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='') %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}{% if required %} *{% endif %}</label>
+    <input 
+        type="{{ type }}" 
+        class="form-control" 
+        id="{{ name }}"
+        name="{{ name }}" 
+        value="{{ value }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+        {% if min is not none %}min="{{ min }}"{% endif %}
+        {% if max is not none %}max="{{ max }}"{% endif %}
+    >
+</div>
+{% endmacro %}
+
+{# Macro: Form Select Field
+   
+   Description: Creates a Bootstrap 5 styled select dropdown with options.
+   
+   Parameters:
+     - name (required): Select field name attribute
+     - label (required): Field label text
+     - options (required): List of tuples [(value, text), ...]
+     - selected (optional): Pre-selected value
+     - required (optional): Mark as required (default: false)
+     - empty_option (optional): Text for empty option (default: '-- Select --')
+   
+   Example 1 - Basic select:
+     {{ select_field(
+         name="level",
+         label="Competition Level",
+         options=[('A', 'Beginner (A)'), ('F', 'Advanced (F)'), ('O', 'Open (O)')],
+         required=true
+     ) }}
+   
+   Example 2 - Select with pre-selected value:
+     {{ select_field(
+         name="helper_id",
+         label="Assign Helper",
+         options=[(h.id, h.name) for h in helpers],
+         selected=exercise.helper_id
+     ) }}
+   
+   Example 3 - Select without empty option:
+     {{ select_field(
+         name="status",
+         label="Status",
+         options=[('active', 'Active'), ('inactive', 'Inactive')],
+         empty_option='',
+         selected='active'
+     ) }}
+#}
+{% macro select_field(name, label, options, selected='', required=false, empty_option='-- Select --') %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    <select class="form-select" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+        {% if empty_option %}
+        <option value="">{{ empty_option }}</option>
+        {% endif %}
+        {% for value, text in options %}
+            <option value="{{ value }}" {% if value == selected or value|string == selected|string %}selected{% endif %}>
+                {{ text }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+{# Macro: Form Textarea Field
+   
+   Description: Creates a Bootstrap 5 styled textarea field.
+   
+   Parameters:
+     - name (required): Textarea field name attribute
+     - label (required): Field label text
+     - value (optional): Initial textarea content
+     - placeholder (optional): Placeholder text
+     - required (optional): Mark as required (default: false)
+     - rows (optional): Number of visible text rows (default: 3)
+   
+   Example 1 - Basic textarea:
+     {{ textarea_field(
+         name="description",
+         label="Competition Description",
+         placeholder="Enter a detailed description...",
+         rows=5
+     ) }}
+   
+   Example 2 - Required textarea with value:
+     {{ textarea_field(
+         name="notes",
+         label="Notes",
+         value=competition.notes,
+         required=true,
+         rows=4
+     ) }}
+#}
+{% macro textarea_field(name, label, value='', placeholder='', required=false, rows=3) %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    <textarea 
+        class="form-control" 
+        id="{{ name }}"
+        name="{{ name }}"
+        rows="{{ rows }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+    >{{ value }}</textarea>
+</div>
+{% endmacro %}

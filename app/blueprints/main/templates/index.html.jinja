@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    {% call macros.table_form('Workingtest Planer', competitions) %}
+    {% call macros.table_form('Workingtest Planer', items=competitions, details_route='wts.wt_details') %}
         <div class="table-responsive">
             {% call macros.table(['Competition', 'Class', 'Location', 'Date']) %}
                 {% for competition in competitions %}

@@ -1,0 +1,55 @@
+{# ============================================================================ #}
+{# LAYOUT MACROS                                                              #}
+{# ============================================================================ #}
+
+{# Macro: Page Header with Title and Subtitle
+   
+   Description: Displays a page header with title, optional subtitle, and metadata.
+   
+   Parameters:
+     - title (required): Main heading text
+     - subtitle (optional): Descriptive text below title
+     - level (optional): Competition level or category
+     - location (optional): Location information
+     - date (optional): Date information
+   
+   Example 1 - Simple header:
+     {% from "macros/layout.html.jinja" import page_header %}
+     {{ page_header(title="Competition Results") }}
+   
+   Example 2 - Header with subtitle and metadata:
+     {{ page_header(
+         title="Working Test 2024",
+         subtitle="Annual Dog Competition",
+         level="Advanced (F)",
+         location="Berlin",
+         date="2024-03-15"
+     ) }}
+   
+   Example 3 - Header with action buttons (using caller):
+     {% call page_header(title="My Competitions") %}
+         <a href="{{ url_for('wts.create') }}" class="btn btn-primary">Create New</a>
+     {% endcall %}
+#}
+{% macro page_header(title, subtitle='', level='', location='', date='') %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>{{ title }}</h1>
+        {% if subtitle %}
+        <p class="text-muted">{{ subtitle }}</p>
+        {% endif %}
+        {% if level or location or date %}
+        <p class="text-muted">
+            {% if level %}<strong>{{ level }}</strong>{% if location %} | {% endif %}{% endif %}
+            {% if location %}{{ location }}{% if date %} | {% endif %}{% endif %}
+            {% if date %}{{ date }}{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% if caller %}
+    <div class="col-md-4 text-end">
+        {{ caller() }}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}

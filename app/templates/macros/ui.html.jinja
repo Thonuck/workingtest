@@ -1,0 +1,210 @@
+{# ============================================================================ #}
+{# UI COMPONENT MACROS                                                        #}
+{# ============================================================================ #}
+
+{# Macro: Flash Messages Display
+   
+   Description: Displays Flask flash messages with Bootstrap alert styling.
+   
+   Example:
+     {% from "macros/ui.html.jinja" import flash_messages %}
+     {{ flash_messages() }}
+   
+   Note: Flash messages are automatically styled based on their category:
+     - 'success' -> green alert
+     - 'danger' -> red alert
+     - 'warning' -> yellow alert
+     - 'info' -> blue alert
+#}
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+{# Macro: Alert Box
+   
+   Description: Creates a Bootstrap alert box with optional title.
+   
+   Parameters:
+     - message (required): Alert message text
+     - type (optional): Alert type (info, success, warning, danger) (default: 'info')
+     - title (optional): Bold title text
+   
+   Example 1 - Simple info alert:
+     {% from "macros/ui.html.jinja" import alert_box %}
+     {{ alert_box(message="Competition created successfully!", type="success") }}
+   
+   Example 2 - Alert with title:
+     {{ alert_box(
+         title="Important Notice",
+         message="The competition deadline is approaching.",
+         type="warning"
+     ) }}
+#}
+{% macro alert_box(message, type='info', title='') %}
+<div class="alert alert-{{ type }}" role="alert">
+    {% if title %}<strong>{{ title }}</strong><br>{% endif %}
+    {{ message }}
+</div>
+{% endmacro %}
+
+{# Macro: Empty State Message
+   
+   Description: Shows a message when no data is available, with optional action link.
+   
+   Parameters:
+     - title (required): Empty state title
+     - message (required): Descriptive message
+     - action_url (optional): URL for action link
+     - action_label (optional): Text for action link
+   
+   Example 1 - Simple empty state:
+     {% from "macros/ui.html.jinja" import empty_state %}
+     {{ empty_state(
+         title="No Competitions Found",
+         message="There are currently no competitions scheduled."
+     ) }}
+   
+   Example 2 - Empty state with action:
+     {{ empty_state(
+         title="No Exercises Assigned",
+         message="This competition has no exercises yet.",
+         action_url=url_for('exercises.create', competition_id=comp.id),
+         action_label="Create First Exercise"
+     ) }}
+#}
+{% macro empty_state(title, message, action_url='', action_label='') %}
+<div class="alert alert-info" role="alert">
+    <strong>{{ title }}</strong><br>
+    {{ message }}
+    {% if action_url %}
+    <br><a href="{{ action_url }}" class="alert-link">{{ action_label }}</a>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# Macro: Button Group
+   
+   Description: Creates a horizontal group of buttons with consistent spacing.
+   
+   Parameters:
+     - buttons (required): List of button dictionaries with keys:
+       * type: 'submit', 'link', or 'form'
+       * label: Button text
+       * url: Target URL (for link and form types)
+       * style: Bootstrap color (primary, secondary, danger, etc.)
+       * confirm: Confirmation message (for form type, optional)
+   
+   Example 1 - Basic button group:
+     {% from "macros/ui.html.jinja" import button_group %}
+     {{ button_group([
+         {'type': 'link', 'label': 'Back', 'url': url_for('wts.index'), 'style': 'secondary'},
+         {'type': 'link', 'label': 'Edit', 'url': url_for('wts.edit', id=comp.id), 'style': 'primary'}
+     ]) }}
+   
+   Example 2 - Button group with form submission:
+     {{ button_group([
+         {'type': 'link', 'label': 'Cancel', 'url': url_for('wts.index'), 'style': 'secondary'},
+         {
+             'type': 'form',
+             'label': 'Publish',
+             'url': url_for('wts.publish', id=comp.id),
+             'style': 'success',
+             'confirm': 'Publish this competition?'
+         }
+     ]) }}
+   
+   Example 3 - With custom content via caller:
+     {% call button_group([{'type': 'link', 'label': 'Back', 'url': url_for('wts.index')}]) %}
+         <button type="button" class="btn btn-info" onclick="printPage()">Print</button>
+     {% endcall %}
+#}
+{% macro button_group(buttons=[]) %}
+<div class="d-flex gap-2">
+    {% for button in buttons %}
+        {% if button.type == 'submit' %}
+        <button type="submit" class="btn btn-{{ button.style|default('primary') }}">
+            {{ button.label }}
+        </button>
+        {% elif button.type == 'link' %}
+        <a href="{{ button.url }}" class="btn btn-{{ button.style|default('secondary') }}">
+            {{ button.label }}
+        </a>
+        {% elif button.type == 'form' %}
+        <form method="POST" action="{{ button.url }}" style="display:inline;" {% if button.confirm %}onsubmit="return confirm('{{ button.confirm }}');"{% endif %}>
+            <button type="submit" class="btn btn-{{ button.style|default('danger') }}">
+                {{ button.label }}
+            </button>
+        </form>
+        {% endif %}
+    {% endfor %}
+    {{ caller() if caller }}
+</div>
+{% endmacro %}
+
+{# Macro: Status Badge
+   
+   Description: Displays a colored badge showing published/unpublished status.
+   
+   Parameters:
+     - published (required): Boolean value for status
+     - published_label (optional): Text for published state (default: 'Published')
+     - unpublished_label (optional): Text for unpublished state (default: 'Not Published')
+   
+   Example 1 - Basic status badge:
+     {% from "macros/ui.html.jinja" import status_badge %}
+     {{ status_badge(published=competition.is_published) }}
+   
+   Example 2 - Custom labels:
+     {{ status_badge(
+         published=user.is_active,
+         published_label='Active',
+         unpublished_label='Inactive'
+     ) }}
+#}
+{% macro status_badge(published, published_label='Published', unpublished_label='Not Published') %}
+{% if published %}
+    <span class="badge bg-success">{{ published_label }}</span>
+{% else %}
+    <span class="badge bg-danger">{{ unpublished_label }}</span>
+{% endif %}
+{% endmacro %}
+
+{# Macro: Ranking Badge with Medal
+   
+   Description: Displays ranking with medal emojis for top 3 positions.
+   
+   Parameters:
+     - rank (required): Integer ranking position
+   
+   Example:
+     {% from "macros/ui.html.jinja" import ranking_badge %}
+     <table>
+         <tr>
+             <td>{{ ranking_badge(rank=1) }}</td>  {# Shows: 🥇 1st #}
+             <td>Max & Bella</td>
+             <td>95 points</td>
+         </tr>
+         <tr>
+             <td>{{ ranking_badge(rank=2) }}</td>  {# Shows: 🥈 2nd #}
+             <td>Anna & Rex</td>
+             <td>89 points</td>
+         </tr>
+     </table>
+#}
+{% macro ranking_badge(rank) %}
+{% if rank == 1 %}
+    <span class="fw-bold">🥇 1st</span>
+{% elif rank == 2 %}
+    <span class="fw-bold">🥈 2nd</span>
+{% elif rank == 3 %}
+    <span class="fw-bold">🥉 3rd</span>
+{% else %}
+    <span class="fw-bold">{{ rank }}</span>
+{% endif %}
+{% endmacro %}
