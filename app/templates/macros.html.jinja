@@ -131,7 +131,7 @@
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                {% for header in headers %}
+                {% for header, key in headers %}
                 <th scope="col">{{ header }}</th>
                 {% endfor %}
             </tr>
@@ -187,14 +187,15 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro data_table(headers, items) %}
+{% macro data_table_2(title_key, headers, items, details_route) %}
 
     <div class="table-responsive">
-        {% call macros.table(headers) %}
+        {% set header_names = headers | map(attribute=1) | list %}
+        {% call table(header_names) %}
             {% for item in items %}
-                {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
-                    {% for header in headers %}
-                        <td>{{ items[header] }}</td>
+                {% call table_row(url_for(details_route, competition_id=item.id)) %}
+                    {% for key, header in headers %}
+                        <td>{{ item[key] }}</td>
                     {% endfor %}
                 {% endcall %}
             {% endfor %}
@@ -203,7 +204,7 @@
 {% endmacro %}
 
 {# Table Form with Responsive Cards - Used on main index page #}
-{% macro table_form(title, items, details_route, show_flash=true) %}
+{% macro table_form(title, headers, items, details_route, show_flash=true) %}
 <div class="row mt-5">
     <div class="col-12">
         <div class="card">
@@ -217,7 +218,10 @@
                 <!-- Table for medium and larger screens -->
                 <div class="table-container d-none d-md-block">
                     <!-- Table for larger screens -->
-                    {{ caller() }}
+                    {{ data_table_2(title_key='name',
+                                    headers=headers,
+                                    items=items,
+                                    details_route=details_route) }}
                 </div>
                 <div class="card-container d-block d-md-none">
                     <!-- Cards for small screens -->
