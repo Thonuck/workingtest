@@ -1,23 +1,21 @@
 {% extends "base.html.jinja" %}
+{% import 'macros.html.jinja' as macros %}
 
 {% block title %}Starters - My Website{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
 
-    <h1 class="mb-4">Starters</h1>
-    <div class="row">
-        {% for starter in starters %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <img src="{{ starter.image_url }}" class="card-img-top" alt="{{ starter.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ starter.name }}</h5>
-                    <p class="card-text">{{ starter.description }}</p>
-                </div>
-            </div>
+    {% call macros.table_form("Starter Liste", starters) %}
+        <div class="table-responsive">
+            {% call macros.table(["Nummer", "Name", "Description"]) %}
+                {% for starter in starters %}
+                    {% call macros.table_row() %}
+                        <td>{{ starter.number }}</td>
+                        <td>{{ starter.name }}</td>
+                        <td>{{ starter.dog }}</td>
+                    {% endcall %}
+                {% endfor %}
+            {% endcall %}
         </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock 
+    {% endcall %}
+{% endblock %}

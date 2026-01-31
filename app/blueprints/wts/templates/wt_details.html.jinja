@@ -15,6 +15,7 @@
     <div class="container mt-5">
 
         <a href="{{ url_for('exercises.wt_exercises', competition_id=competition.id) }}" class="btn btn-secondary">Aufgaben</a>
+        <a href="{{ url_for('starters.starters', competition_id=competition.id) }}" class="btn btn-secondary">Starterliste</a>
 
         <form action="{{ url_for('wts.delete_wt', competition_id=competition.id) }}" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Workingtest löschen möchten?');">
             <button type="submit" class="btn btn-danger">Löschen</button>

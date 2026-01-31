@@ -1,0 +1,177 @@
+{# ============================================================================ #}
+{# TABLE MACROS                                                               #}
+{# ============================================================================ #}
+
+{# Macro: Data Table with Dark Header
+   
+   Description: Creates a responsive Bootstrap table with striped rows and dark header.
+   
+   Parameters:
+     - headers (optional): List of column header names
+   
+   Example 1 - Basic table:
+     {% from "macros/tables.html.jinja" import data_table %}
+     {% call data_table(headers=["Name", "Level", "Location", "Date"]) %}
+         {% for comp in competitions %}
+         <tr>
+             <td>{{ comp.name }}</td>
+             <td>{{ comp.level }}</td>
+             <td>{{ comp.location }}</td>
+             <td>{{ comp.date }}</td>
+         </tr>
+         {% endfor %}
+     {% endcall %}
+   
+   Example 2 - Table with clickable rows:
+     {% from "macros/tables.html.jinja" import data_table, table_row %}
+     {% call data_table(headers=["Starter", "Score", "Rank"]) %}
+         {% for result in results %}
+             {% call table_row(url=url_for('results.detail', id=result.id)) %}
+                 <td>{{ result.starter_number }}</td>
+                 <td>{{ result.score }}</td>
+                 <td>{{ result.rank }}</td>
+             {% endcall %}
+         {% endfor %}
+     {% endcall %}
+#}
+{% macro data_table(headers=[]) %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                {% for header in headers %}
+                <th scope="col">{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {{ caller() }}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
+
+{# Macro: Clickable Table Row
+   
+   Description: Makes an entire table row clickable and navigates to specified URL.
+   
+   Parameters:
+     - url (required): Target URL when row is clicked
+   
+   Example:
+     {% from "macros/tables.html.jinja" import data_table, table_row %}
+     {% call data_table(headers=["Competition", "Date"]) %}
+         {% for comp in competitions %}
+             {% call table_row(url=url_for('wts.wt_details', competition_id=comp.id)) %}
+                 <td>{{ comp.name }}</td>
+                 <td>{{ comp.date }}</td>
+             {% endcall %}
+         {% endfor %}
+     {% endcall %}
+#}
+{% macro table_row(url) %}
+<tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
+    {{ caller() }}
+</tr>
+{% endmacro %}
+
+{# Macro: Action Buttons for Table Rows
+   
+   Description: Creates a button group with various action buttons for table rows.
+   
+   Parameters:
+     - buttons (required): List of button dictionaries with keys:
+       * type: 'link' or 'submit'
+       * label: Button text
+       * url: Target URL
+       * style: Bootstrap color (info, danger, warning, etc.)
+       * title: Tooltip text (optional)
+       * confirm: Confirmation message for submit buttons (optional)
+   
+   Example:
+     {% from "macros/tables.html.jinja" import data_table, action_buttons %}
+     {% call data_table(headers=["Exercise", "Helper", "Actions"]) %}
+         {% for exercise in exercises %}
+         <tr>
+             <td>{{ exercise.name }}</td>
+             <td>{{ exercise.helper.name }}</td>
+             <td>
+                 {{ action_buttons([
+                     {
+                         'type': 'link',
+                         'label': 'Edit',
+                         'url': url_for('exercises.edit', id=exercise.id),
+                         'style': 'info'
+                     },
+                     {
+                         'type': 'submit',
+                         'label': 'Delete',
+                         'url': url_for('exercises.delete', id=exercise.id),
+                         'style': 'danger',
+                         'confirm': 'Are you sure you want to delete this exercise?'
+                     }
+                 ]) }}
+             </td>
+         </tr>
+         {% endfor %}
+     {% endcall %}
+#}
+{% macro action_buttons(buttons=[]) %}
+<div class="btn-group btn-group-sm" role="group">
+    {% for btn in buttons %}
+        {% if btn.type == 'link' %}
+        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('info') }}" title="{{ btn.title|default('') }}">
+            {{ btn.label }}
+        </a>
+        {% elif btn.type == 'submit' %}
+        <form method="POST" action="{{ btn.url }}" style="display:inline;" 
+              {% if btn.confirm %}onsubmit="return confirm('{{ btn.confirm }}');"{% endif %}>
+            <button type="submit" class="btn btn-{{ btn.style|default('danger') }}" title="{{ btn.title|default('') }}">
+                {{ btn.label }}
+            </button>
+        </form>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{# Macro: Table Form (for main index page with responsive cards) #}
+{% macro table_form(title, competitions, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {% from "macros/ui.html.jinja" import flash_messages %}
+                    {{ flash_messages() }}
+                {% endif %}
+                
+                <!-- Table for medium and larger screens -->
+                <div class="table-container d-none d-md-block">
+                    {{ caller() }}
+                </div>
+                
+                <!-- Cards for small screens -->
+                <div class="card-container d-block d-md-none">
+                    {% for competition in competitions %}
+                    <div class="card mb-3"
+                         onclick="window.location='{{ url_for('wts.wt_details', competition_id=competition.id) }}'"
+                         style="cursor: pointer;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ competition.name }}</h5>
+                            <p class="card-text">
+                                <strong>Level:</strong> {{ competition.level }}<br>
+                                <strong>Location:</strong> {{ competition.location }}<br>
+                                <strong>Date:</strong> {{ competition.date }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}

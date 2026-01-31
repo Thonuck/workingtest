@@ -14,13 +14,23 @@ from app.decorators import roles_required
 @login_required
 @roles_required(['admin', 'coach'])
 def starters(competition_id):
-    competition = Competition.query.get_or_404(competition_id)
-    exercises = Exercise.query.filter_by(competition_id=competition_id).all()
-    starters = Starter.query.filter_by(competition_id=competition_id).all()
+    # competition = Competition.query.get_or_404(competition_id)
+    # exercises = Exercise.query.filter_by(competition_id=competition_id).all()
+    # starters = Starter.query.filter_by(competition_id=competition_id).all()
+    starters = [{
+        'id': 1,
+        'number': "A1",
+        'name': 'Starter 1',
+        'dog': 'Dog Name 1'
+    }, {
+        'id': 2,
+        'number': "A2",
+        'name': 'Starter 2',
+        'dog': 'Dog Name 2'
+    }]
+    
 
     return render_template(
-        'starters/starters.html.jinja',
-        competition=competition,
-        exercises=exercises,
+        'starters.html.jinja',
         starters=starters
     )
