@@ -3,19 +3,9 @@
 
 {% block content %}
 
-    {% call macros.table_form('Workingtest Planer', items=competitions, details_route='wts.wt_details') %}
-        <div class="table-responsive">
-            {% call macros.table(['Competition', 'Class', 'Location', 'Date']) %}
-                {% for competition in competitions %}
-                    {% call macros.table_row(url_for('wts.wt_details', competition_id=competition.id)) %}
-                        <td>{{ competition.name }}</td>
-                        <td>{{ competition.level }}</td>
-                        <td>{{ competition.location }}</td>
-                        <td class="d-none d-md-table-cell">{{ competition.date }}</td>
-                    {% endcall %}
-                {% endfor %}
-            {% endcall %}
-        </div>
-    {% endcall %}
+    {{ macros.table_form(title='Workingtest Planer',
+                         headers=headers,
+                         items=competitions,
+                         details_route='wts.wt_details') }}
 
 {% endblock %}
