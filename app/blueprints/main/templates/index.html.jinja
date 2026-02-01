@@ -1,11 +1,8 @@
 {% extends "base.html.jinja" %}
-{% import 'macros.html.jinja' as macros %}
+{% import 'generic_table.html.jinja' as generic_table %}
 
 {% block content %}
 
-    {{ macros.table_form(title='Workingtest Planer',
-                         headers=headers,
-                         items=competitions,
-                         details_route='wts.wt_details') }}
+    {{ generic_table.generic_tyble(table_data=table_data) }}
 
 {% endblock %}

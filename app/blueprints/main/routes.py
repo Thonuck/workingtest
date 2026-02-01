@@ -18,10 +18,15 @@ def index():
             'competition': comp,
             'results_published': is_published
         })
-        headers = [("name", "Name"), ("level", "Klasse"), ("location", "Ort"), ("date", "Datum")]
+    headers = [("name", "Name"), ("level", "Klasse"), ("location", "Ort"), ("date", "Datum")]
+
+    table_data = {
+        'title': "Wettbewerbe",
+        'headers': headers,
+        'items': competitions}
 
     
-    return render_template('index.html.jinja', headers=headers, competitions=competitions)
+    return render_template('index.html.jinja', table_data=table_data)
 
 
 @bp.route('/about')
