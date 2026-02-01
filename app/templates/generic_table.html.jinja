@@ -1,0 +1,119 @@
+{#   DATABASE GENERIC TABLE FOR BIG AND SMALL SCREENS                   #}
+{#                                                                      #}
+{# generic_table(title, headers, items, details_route, show_flash=true) #}
+{#                                                                      #}
+{# change to one data container:                                        #}
+{#                                                                      #}
+{# data_table = {"title": "Tabellen Title",                             #}
+{#               "headers": [("name", "Name"), ("date", "Datum"), ..],  #}
+{#               "items": [{"name": <value>, "date": <value>}, ...],    #}
+{#               "details_route": "wts.details"}                        #}
+{#                                                                      #}
+{# The details route should expect the argument "id"                    #}
+{#                                                                      #}
+{# TODO: mark internal macros with leading '_'                          #}
+{#       rewrite generic_table to process 'data_table'                  #}
+{#                                                                      #}
+
+
+{# Flash Messages Display - Shows Flask flash messages #}
+{% macro flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+{# Table Structure - Creates a responsive table with headers #}
+{% macro normal_table(headers) %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                {% for header in headers %}
+                <th scope="col">{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {{ caller() }}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
+
+{# Clickable Table Row - Makes entire row clickable #}
+{% macro clickable_table_row(url) %}
+<tr onclick="window.location='{{ url }}'" style="cursor: pointer;">
+    {{ caller() }}
+</tr>
+{% endmacro %}
+
+{# card layout for table data on small screens #}
+{% macro card_list(title_key, keys, items, details_route) %}
+    {% for item in items %}
+    <div class="card mb-3" onclick="window.location='{{ url_for(details_route, competition_id=item.id) }}'" style="cursor: pointer;">
+        <div class="card-body">
+            
+            <h5 class="card-title">{{ item[title_key] }}</h5>
+            <p class="card-text">
+                {% for key in keys %}
+                    <strong>{{ key }}:</strong> {{ item[key] }}<br>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+{% endmacro %}
+
+
+{% macro generic_wide_table(title_key, headers, items, details_route) %}
+
+    <div class="table-responsive">
+        {% set header_names = headers | map(attribute=1) | list %}
+        {% call normal_table(header_names) %}
+            {% for item in items %}
+                {% call wide_table_row(url_for(details_route, competition_id=item.id)) %} {% for key, header in headers %} <td>{{ item[key] }}</td>
+                    {% endfor %}
+                {% endcall %}
+            {% endfor %}
+        {% endcall %}
+    </div>
+{% endmacro %}
+
+{# Table Form with Responsive Cards - Used on main index page #}
+{% macro generic_table(title, headers, items, details_route, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {{ flash_messages() }}
+                {% endif %}
+                
+                <!-- Table for medium and larger screens -->
+                <div class="table-container d-none d-md-block">
+                    <!-- Table for larger screens -->
+                    {{ generic_wide_table(title_key='name',
+                                    headers=headers,
+                                    items=items,
+                                    details_route=details_route) }}
+                </div>
+                <div class="card-container d-block d-md-none">
+                    <!-- Cards for small screens -->
+                    {{ card_list(title_key='name',
+                                 keys=['level', 'location', 'date'],
+                                 items=items,
+                                 details_route=details_route) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
