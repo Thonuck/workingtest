@@ -53,15 +53,15 @@
 {% endmacro %}
 
 {# card layout for table data on small screens #}
-{% macro card_list(title_key, keys, items, details_route) %}
+{% macro card_list(title_key, headers, items, details_route) %}
     {% for item in items %}
     <div class="card mb-3" onclick="window.location='{{ url_for(details_route, competition_id=item.id) }}'" style="cursor: pointer;">
         <div class="card-body">
             
             <h5 class="card-title">{{ item[title_key] }}</h5>
             <p class="card-text">
-                {% for key in keys %}
-                    <strong>{{ key }}:</strong> {{ item[key] }}<br>
+                {% for key, header in headers %}
+                    <strong>{{ header }}:</strong> {{ item[key] }}<br>
                 {% endfor %}
             </p>
         </div>
@@ -76,7 +76,9 @@
         {% set header_names = headers | map(attribute=1) | list %}
         {% call normal_table(header_names) %}
             {% for item in items %}
-                {% call wide_table_row(url_for(details_route, competition_id=item.id)) %} {% for key, header in headers %} <td>{{ item[key] }}</td>
+                {% call wide_table_row(url_for(details_route, competition_id=item.id)) %}
+                    {% for key, header in headers %}
+                        <td>{{ item[key] }}</td>
                     {% endfor %}
                 {% endcall %}
             {% endfor %}
@@ -90,7 +92,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title">{{ title }}</h1>
+                <h1 class="card-title">{{ table_data.title }}</h1>
                 
                 {% if show_flash %}
                     {{ flash_messages() }}
@@ -99,17 +101,17 @@
                 <!-- Table for medium and larger screens -->
                 <div class="table-container d-none d-md-block">
                     <!-- Table for larger screens -->
-                    {{ generic_wide_table(title_key='name',
-                                    headers=headers,
-                                    items=items,
-                                    details_route=details_route) }}
+                    {{ generic_wide_table(title_key=table_data.title,
+                                    headers=table_data.headers,
+                                    items=table_data.items,
+                                    details_route=table_data.details_route) }}
                 </div>
                 <div class="card-container d-block d-md-none">
                     <!-- Cards for small screens -->
-                    {{ card_list(title_key='name',
-                                 keys=['level', 'location', 'date'],
-                                 items=items,
-                                 details_route=details_route) }}
+                    {{ card_list(title_key=table_data.title,
+                                 headers=table_data.headers,
+                                 items=table_data.items,
+                                 details_route=table_data.details_route) }}
                 </div>
             </div>
         </div>
