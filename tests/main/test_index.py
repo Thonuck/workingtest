@@ -14,6 +14,8 @@ def test_index_with_empty_competitions(client):
     assert response.status_code == 200
     # The page should render without errors even with empty competitions list
     assert b"Wettbewerbe" in response.data or b"Workingtest" in response.data
+    # Check that the "no entries" message is displayed
+    assert b"Keine Eintr" in response.data  # "Keine Einträge verfügbar"
 
 
 def test_index_with_competitions(client, app):
@@ -33,3 +35,5 @@ def test_index_with_competitions(client, app):
     response = client.get('/')
     assert response.status_code == 200
     assert b"Test Competition" in response.data
+    # The "no entries" message should NOT be displayed when there are competitions
+    assert b"Keine Eintr" not in response.data
