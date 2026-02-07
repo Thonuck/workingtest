@@ -41,7 +41,7 @@ def index():
         'items': items,
         'details_route': 'wts.wt_details'}
 
-    logger.error("datatable: %s", table_data)
+    logger.debug("datatable: %s", table_data)
     
     return render_template('index.html.jinja', table_data=table_data)
 
