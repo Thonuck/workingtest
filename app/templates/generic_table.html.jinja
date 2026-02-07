@@ -59,7 +59,7 @@
         <div class="card mb-3" onclick="window.location='{{ url_for(details_route, competition_id=item.id) }}'" style="cursor: pointer;">
             <div class="card-body">
                 
-                <h5 class="card-title">{{ item[title_key] }}</h5>
+                <h5 class="card-title">{{ item[headers[0][0]] }}</h5>
                 <p class="card-text">
                     {% for key, header in headers %}
                         <strong>{{ header }}:</strong> {{ item[key] }}<br>
@@ -111,14 +111,14 @@
                 <!-- Table for medium and larger screens -->
                 <div class="table-container d-none d-md-block">
                     <!-- Table for larger screens -->
-                    {{ generic_wide_table(title_key="name",
+                    {{ generic_wide_table(title_key=table_data.title,
                                     headers=table_data.headers,
                                     items=table_data['items'],
                                     details_route=table_data.details_route) }}
                 </div>
                 <div class="card-container d-block d-md-none">
                     <!-- Cards for small screens -->
-                    {{ card_list(title_key="name",
+                    {{ card_list(title_key=table_data.title,
                                  headers=table_data.headers,
                                  items=table_data['items'],
                                  details_route=table_data.details_route) }}
