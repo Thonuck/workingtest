@@ -24,10 +24,22 @@ def index():
         })
     headers = [("name", "Name"), ("level", "Klasse"), ("location", "Ort"), ("date", "Datum")]
 
+    # Convert Competition objects to dictionaries for template
+    items = []
+    for comp in competitions:
+        items.append({
+            'id': comp.id,
+            'name': comp.name,
+            'level': comp.level,
+            'location': comp.location,
+            'date': comp.date.strftime('%Y-%m-%d') if comp.date else ''
+        })
+
     table_data = {
         'title': "Wettbewerbe",
         'headers': headers,
-        'items': list(competitions)}
+        'items': items,
+        'details_route': 'wts.wt_details'}
 
     logger.error("datatable: %s", table_data)
     
