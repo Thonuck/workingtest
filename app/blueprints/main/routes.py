@@ -3,6 +3,10 @@ from flask_login import current_user
 from app.blueprints.main import bp
 from app import db
 from app.models import Competition, CompetitionResult
+import logging
+
+logger = logging.getLogger()
+
 
 @bp.route('/')
 def index():
@@ -23,8 +27,9 @@ def index():
     table_data = {
         'title': "Wettbewerbe",
         'headers': headers,
-        'items': competitions}
+        'items': list(competitions)}
 
+    logger.error("datatable: %s", table_data)
     
     return render_template('index.html.jinja', table_data=table_data)
 
