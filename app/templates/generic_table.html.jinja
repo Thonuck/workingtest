@@ -53,10 +53,14 @@
 {% endmacro %}
 
 {# card layout for table data on small screens #}
-{% macro card_list(title_key, headers, items, details_route) %}
+{% macro card_list(title_key, headers, items, details_route, competition_id=None) %}
     {% if items %}
         {% for item in items %}
+        {% if competition_id %}
+        <div class="card mb-3" onclick="window.location='{{ url_for(details_route, id=item.id, competition_id=competition_id) }}'" style="cursor: pointer;">
+        {% else %}
         <div class="card mb-3" onclick="window.location='{{ url_for(details_route, id=item.id) }}'" style="cursor: pointer;">
+        {% endif %}
             <div class="card-body">
                 
                 <h5 class="card-title">{{ item[headers[0][0]] }}</h5>
@@ -74,18 +78,26 @@
 {% endmacro %}
 
 
-{% macro generic_wide_table(title_key, headers, items, details_route) %}
+{% macro generic_wide_table(title_key, headers, items, details_route, competition_id=None) %}
 
     <div class="table-responsive">
         {% set header_names = headers | map(attribute=1) | list %}
         {% call normal_table(header_names) %}
             {% if items %}
                 {% for item in items %}
-                    {% call clickable_table_row(url_for(details_route, id=item.id)) %}
-                        {% for key, header in headers %}
-                            <td>{{ item[key] }}</td>
-                        {% endfor %}
-                    {% endcall %}
+                    {% if competition_id %}
+                        {% call clickable_table_row(url_for(details_route, id=item.id, competition_id=competition_id)) %}
+                            {% for key, header in headers %}
+                                <td>{{ item[key] }}</td>
+                            {% endfor %}
+                        {% endcall %}
+                    {% else %}
+                        {% call clickable_table_row(url_for(details_route, id=item.id)) %}
+                            {% for key, header in headers %}
+                                <td>{{ item[key] }}</td>
+                            {% endfor %}
+                        {% endcall %}
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <tr>
@@ -114,14 +126,16 @@
                     {{ generic_wide_table(title_key=table_data.title,
                                     headers=table_data.headers,
                                     items=table_data['items'],
-                                    details_route=table_data.details_route) }}
+                                    details_route=table_data.details_route,
+                                    competition_id=table_data.get('competition_id')) }}
                 </div>
                 <div class="card-container d-block d-md-none">
                     <!-- Cards for small screens -->
                     {{ card_list(title_key=table_data.title,
                                  headers=table_data.headers,
                                  items=table_data['items'],
-                                 details_route=table_data.details_route) }}
+                                 details_route=table_data.details_route,
+                                 competition_id=table_data.get('competition_id')) }}
                 </div>
             </div>
         </div>
