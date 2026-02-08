@@ -6,9 +6,9 @@ from app.models import User, Competition
 from datetime import date as dt_date
 from app.decorators import roles_required
 
-@bp.route('/wts/details/<int:competition_id>')
-def wt_details(competition_id):
-    competition = Competition.query.get_or_404(competition_id)
+@bp.route('/wts/details/<int:id>')
+def wt_details(id):
+    competition = Competition.query.get_or_404(id)
     return render_template('wt_details.html.jinja', competition=competition)
 
 @bp.route('/create_wt', methods=['GET', 'POST'])
