@@ -29,8 +29,27 @@ def starters(competition_id):
         'dog': 'Dog Name 2'
     }]
     
-
+    """
     return render_template(
         'starters.html.jinja',
         starters=starters
     )
+    """
+
+    table_data = {
+        'title': "Starterliste",
+        'headers': [('number', 'Startnummer'), ('name': 'Starter Name'), ('dog': 'Hund')],
+        'items': starters,
+        'competition_id': competition_id,
+        'details_route': 'starter_details'}
+    
+    return render_template('index.html.jinja', table_data=table_data)
+
+
+@bp.route('/starters/<int:competition_id>/<int starter_id>')
+@login_required
+@roles_required(['admin', 'coach'])
+def starter_details(competition_id, starter_id):
+    return render_tamplate('starter_details.html.jinja', competition_id=competition_id, starter_id=starter_id)
+
+

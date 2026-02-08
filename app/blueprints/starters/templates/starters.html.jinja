@@ -1,21 +1,10 @@
 {% extends "base.html.jinja" %}
 {% import 'macros.html.jinja' as macros %}
 
-{% block title %}Starters - My Website{% endblock %}
+{% block title %}Starter Liste{% endblock %}
 
 {% block content %}
 
-    {% call macros.table_form("Starter Liste", starters) %}
-        <div class="table-responsive">
-            {% call macros.table(["Nummer", "Name", "Description"]) %}
-                {% for starter in starters %}
-                    {% call macros.table_row() %}
-                        <td>{{ starter.number }}</td>
-                        <td>{{ starter.name }}</td>
-                        <td>{{ starter.dog }}</td>
-                    {% endcall %}
-                {% endfor %}
-            {% endcall %}
-        </div>
-    {% endcall %}
+    {{ generic_table.generic_table(table_data=table_data) }}
+
 {% endblock %}
