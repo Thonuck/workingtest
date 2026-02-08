@@ -56,7 +56,7 @@
 {% macro card_list(title_key, headers, items, details_route, competition_id=None) %}
     {% if items %}
         {% for item in items %}
-        {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) if competition_id else url_for(details_route, id=item.id) %}
+        {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) %}
         <div class="card mb-3" onclick="window.location='{{ detail_url }}'" style="cursor: pointer;">
             <div class="card-body">
                 
@@ -82,7 +82,7 @@
         {% call normal_table(header_names) %}
             {% if items %}
                 {% for item in items %}
-                    {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) if competition_id else url_for(details_route, id=item.id) %}
+                    {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) %}
                     {% call clickable_table_row(detail_url) %}
                         {% for key, header in headers %}
                             <td>{{ item[key] }}</td>
