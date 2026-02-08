@@ -34,7 +34,7 @@ def starters(competition_id):
         'headers': [('number', 'Startnummer'), ('name', 'Starter Name'), ('dog', 'Hund')],
         'items': starters,
         'competition_id': competition_id,
-        'details_route': 'starter_details'}
+        'details_route': 'wts.wt_details'}
     
     return render_template('index.html.jinja', table_data=table_data)
 
