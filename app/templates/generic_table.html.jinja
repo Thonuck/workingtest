@@ -56,11 +56,8 @@
 {% macro card_list(title_key, headers, items, details_route, competition_id=None) %}
     {% if items %}
         {% for item in items %}
-        {% if competition_id %}
-        <div class="card mb-3" onclick="window.location='{{ url_for(details_route, id=item.id, competition_id=competition_id) }}'" style="cursor: pointer;">
-        {% else %}
-        <div class="card mb-3" onclick="window.location='{{ url_for(details_route, id=item.id) }}'" style="cursor: pointer;">
-        {% endif %}
+        {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) if competition_id else url_for(details_route, id=item.id) %}
+        <div class="card mb-3" onclick="window.location='{{ detail_url }}'" style="cursor: pointer;">
             <div class="card-body">
                 
                 <h5 class="card-title">{{ item[headers[0][0]] }}</h5>
@@ -85,19 +82,12 @@
         {% call normal_table(header_names) %}
             {% if items %}
                 {% for item in items %}
-                    {% if competition_id %}
-                        {% call clickable_table_row(url_for(details_route, id=item.id, competition_id=competition_id)) %}
-                            {% for key, header in headers %}
-                                <td>{{ item[key] }}</td>
-                            {% endfor %}
-                        {% endcall %}
-                    {% else %}
-                        {% call clickable_table_row(url_for(details_route, id=item.id)) %}
-                            {% for key, header in headers %}
-                                <td>{{ item[key] }}</td>
-                            {% endfor %}
-                        {% endcall %}
-                    {% endif %}
+                    {% set detail_url = url_for(details_route, id=item.id, competition_id=competition_id) if competition_id else url_for(details_route, id=item.id) %}
+                    {% call clickable_table_row(detail_url) %}
+                        {% for key, header in headers %}
+                            <td>{{ item[key] }}</td>
+                        {% endfor %}
+                    {% endcall %}
                 {% endfor %}
             {% else %}
                 <tr>
