@@ -2,6 +2,16 @@
 Library           Process
 Library           SeleniumLibrary
 Library           OperatingSystem
+Documentation     Test suite for the index/home page (http://localhost:5000/).
+...               Covers: page title, competition table structure, column display,
+...               empty state, authenticated vs. unauthenticated access, and responsive layout.
+...
+...               Suite requirements:
+...               - Flask web app running at http://localhost:5000 (started by __init__.robot suite setup)
+...               - Admin user (username: admin, password: admin) in the database
+...               - Chrome/Chromium and ChromeDriver installed for headlesschrome
+...               - Set PROJECT_DIR env variable to override the default project root path
+...                 (default: /home/runner/work/workingtest/workingtest)
 
 *** Variables ***
 ${INDEX_PAGE}              http://localhost:5000/
@@ -13,22 +23,21 @@ ${ADMIN_PASSWORD}          admin
 
 *** Test Cases ***
 Index Page Displays Title
-    [Documentation]    Testet, dass die Titelzeile "Workingtest Planer" auf der Index-Seite angezeigt wird.
+    [Documentation]    Verifies that the page heading "Workingtest Planer" is visible to
+    ...    any visitor (unauthenticated access allowed).
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running at http://localhost:5000; Chrome/ChromeDriver installed.
+    [Tags]    index    unauthenticated    smoke
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Wait Until Page Contains    Workingtest Planer    timeout=10s
     Close Browser
 
 Index Page Displays All Competitions
-    [Documentation]    Testet, dass alle Wettbewerbe auf der Index-Seite angezeigt werden.
+    [Documentation]    Verifies that the competition table is present on the index page
+    ...    and shows the "Competition" column heading after admin login.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    table
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     # The page should display with the table structure even if empty
@@ -37,12 +46,11 @@ Index Page Displays All Competitions
     Close Browser
 
 Index Page Displays Competition Details
-    [Documentation]    Testet, dass die Details aller Wettbewerbe angezeigt werden (Name, Level, Ort, Datum).
+    [Documentation]    Verifies that all four required column headers (Competition, Class,
+    ...    Location, Date) are present in the competition table.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    table
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Page Should Contain    Competition
@@ -52,14 +60,14 @@ Index Page Displays Competition Details
     Close Browser
 
 Index Page Empty State
-    [Documentation]    Testet die leere Tabelle, wenn keine Wettbewerbe existieren.
+    [Documentation]    Verifies that the index page loads correctly when the database is empty
+    ...    (no competitions). Resets the database and restarts the app before checking.
     ...
-    ...    Execution requirements:
-    ...    - Python must be available on PATH
-    ...    - reset_database.py must exist in the project root directory
-    ...    - Optional env variable PROJECT_DIR must point to the project root
-    ...      (defaults to /home/runner/work/workingtest/workingtest)
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements:
+    ...    - Python on PATH; reset_database.py in project root
+    ...    - Optional PROJECT_DIR env variable (default: /home/runner/work/workingtest/workingtest)
+    ...    - Chrome/ChromeDriver installed
+    [Tags]    index    unauthenticated    empty-state
     # Reset database to empty state
     ${project_dir}=    Get Environment Variable    PROJECT_DIR    /home/runner/work/workingtest/workingtest
     Set Suite Variable    ${PROJECT_DIR}    ${project_dir}
@@ -77,12 +85,11 @@ Index Page Empty State
     Close Browser
 
 Index Page Competition Link Navigation
-    [Documentation]    Testet, dass Admin auf die Index-Seite zugreifen kann und angemeldet ist.
+    [Documentation]    Verifies that an admin user can log in and is shown the index page
+    ...    with "Workingtest Planer" heading and the Logout link.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    navigation
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Input Text      name:username    ${ADMIN_USERNAME}
     Input Text      name:password    ${ADMIN_PASSWORD}
@@ -92,12 +99,12 @@ Index Page Competition Link Navigation
     Close Browser
 
 Index Page Admin Can See Create Button
-    [Documentation]    Testet, dass Admin-Benutzer einen "Create"-Button sehen können.
+    [Documentation]    Verifies that the index page loads for an authenticated admin user.
+    ...    NOTE: Currently only checks the page heading. The "Create" button check depends
+    ...    on the UI implementation and should be expanded once the button is reliably present.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    create
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
@@ -108,22 +115,21 @@ Index Page Admin Can See Create Button
     Close Browser
 
 Index Page Unauthenticated User Can View Results
-    [Documentation]    Testet, dass unauthentische Benutzer die Index-Seite sehen können.
+    [Documentation]    Verifies that the index page is publicly accessible without login,
+    ...    showing the "Workingtest Planer" heading.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; Chrome/ChromeDriver installed.
+    [Tags]    index    unauthenticated    smoke
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Wait Until Page Contains    Workingtest Planer    timeout=10s
     Close Browser
 
 Index Page Authenticated User Access
-    [Documentation]    Testet, dass authentifizierte Benutzer auf die Index-Seite zugreifen können.
+    [Documentation]    Verifies that a logged-in admin user sees the index page and the
+    ...    Logout link (confirming the session is active).
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    smoke
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Input Text      name:username    ${ADMIN_USERNAME}
     Input Text      name:password    ${ADMIN_PASSWORD}
@@ -133,12 +139,11 @@ Index Page Authenticated User Access
     Close Browser
 
 Index Page Table Structure
-    [Documentation]    Testet, dass die Tabelle alle erwarteten Spalten hat.
+    [Documentation]    Verifies that the competition table contains all four required
+    ...    column headers: Competition, Class, Location, Date.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    table
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Page Should Contain    Competition
@@ -148,12 +153,11 @@ Index Page Table Structure
     Close Browser
 
 Index Page Responsive Design
-    [Documentation]    Testet die Responsivität der Index-Seite auf verschiedenen Bildschirmgrößen.
+    [Documentation]    Verifies the index page heading is visible at three common viewport sizes:
+    ...    mobile (375x667), tablet (768x1024), and desktop (1920x1080).
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    responsive
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     
@@ -172,12 +176,11 @@ Index Page Responsive Design
     Close Browser
 
 Index Page Multiple Competitions Display
-    [Documentation]    Testet die Anzeige mehrerer Wettbewerbe auf der Index-Seite.
+    [Documentation]    Verifies that the competition table columns (Competition, Class, Location)
+    ...    are all present on the index page when logged in as admin.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    index    authenticated    table
     Login With Admin User
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Page Should Contain    Workingtest Planer
@@ -188,9 +191,12 @@ Index Page Multiple Competitions Display
 
 *** Keywords ***
 Login With Admin User
-    [Documentation]    Meldet sich mit Admin-Credentials an und schließt den Browser.
+    [Documentation]    Opens the login page, authenticates as admin (admin/admin), waits for
+    ...    the "Logout admin" link to confirm successful login, then closes the browser.
+    ...    Use this keyword as a pre-step when the test needs a fresh authenticated session
+    ...    cookie before opening the actual page under test.
     ...
-    ...    Execution requirements:
+    ...    Requirements:
     ...    - Flask web app must be running at http://localhost:5000
     ...    - Admin user (username: admin, password: admin) must exist in the database
     ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
@@ -202,11 +208,12 @@ Login With Admin User
     Close Browser
 
 Start Web App
-    [Documentation]    Startet die Webanwendung auf http://localhost:5000.
+    [Documentation]    Starts the Flask development server as a background process on port 5000.
+    ...    Waits 5 seconds for the server to become ready before returning.
     ...
-    ...    Execution requirements:
-    ...    - PROJECT_DIR suite variable must be set before calling this keyword
+    ...    Requirements:
+    ...    - Suite variable ${PROJECT_DIR} must be set before calling this keyword
     ...    - run.py must exist in the project root directory
-    ...    - Port 5000 must be available
+    ...    - Port 5000 must be free
     Start Process    python    run.py    cwd=${PROJECT_DIR}    env:PYTHONUNBUFFERED=1
     Sleep    5s

@@ -1,5 +1,15 @@
 *** Settings ***
 Library           SeleniumLibrary
+Documentation     Test suite for access control on the exercise results page
+...               (http://localhost:5000/exercises/results/<id>).
+...               Covers: unauthenticated users see "No results available yet" and no
+...               management buttons; authenticated admin sees "Publish Results" button.
+...
+...               Suite requirements:
+...               - Flask web app running at http://localhost:5000 (started by __init__.robot suite setup)
+...               - A competition with ID=1 must exist — run test_user_login.robot first
+...               - Admin user (username: admin, password: admin) in the database
+...               - Chrome/Chromium and ChromeDriver installed for headlesschrome
 
 *** Variables ***
 ${INDEX_PAGE}         http://localhost:5000/
@@ -8,12 +18,14 @@ ${BROWSER}            headlesschrome
 
 *** Test Cases ***
 Test Unauthenticated User Can View Unpublished Results Page
-    [Documentation]    Testet, dass nicht eingeloggte Benutzer die Results-Seite sehen können und "No results available yet" angezeigt wird, wenn keine Daten vorhanden sind.
+    [Documentation]    Verifies that an unauthenticated visitor can access the results page
+    ...    for competition ID=1 and sees "No results available yet" with the sub-message
+    ...    "Points need to be entered for exercises". Also verifies that the
+    ...    "Publish Results" and "Unpublish Results" management buttons are NOT shown.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - A competition with ID=1 must exist (created by test_user_login.robot; run that suite first)
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; competition ID=1 exists (created by test_user_login.robot);
+    ...    Chrome/ChromeDriver installed.
+    [Tags]    results    unauthenticated    access-control
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
     
@@ -32,13 +44,13 @@ Test Unauthenticated User Can View Unpublished Results Page
     Close Browser
 
 Test Authenticated Admin Can Manage Results
-    [Documentation]    Testet, dass ein Admin-Benutzer die Results-Seite mit Publish/Unpublish-Buttons sehen kann.
+    [Documentation]    Verifies that an authenticated admin user can access the results page
+    ...    for competition ID=1 and sees the "Publish Results" management button in addition
+    ...    to the "No results available yet" message.
     ...
-    ...    Execution requirements:
-    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
-    ...    - Admin user (username: admin, password: admin) must exist in the database
-    ...    - A competition with ID=1 must exist (created by test_user_login.robot; run that suite first)
-    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    Requirements: Flask app running; competition ID=1 exists (created by test_user_login.robot);
+    ...    admin user (admin/admin) exists; Chrome/ChromeDriver installed.
+    [Tags]    results    authenticated    access-control    admin
     # Login as admin
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
