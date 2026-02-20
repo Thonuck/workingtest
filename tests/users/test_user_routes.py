@@ -54,8 +54,23 @@ def test_dashboard_without_login(client):
 
 def test_list_users(client):
     """Test Auflistung aller User"""
+    # Route erfordert Admin/Organizer-Rolle, daher erst als Admin einloggen
+    with client.application.app_context():
+        admin = User(username="admin_listusers", role="admin")
+        admin.set_password("adminpass")
+        db.session.add(admin)
+        db.session.commit()
+
+    client.post(
+        "/users/login",
+        data={
+            "username": "admin_listusers",
+            "password": "adminpass",
+        }
+    )
+
     response = client.get("/users/")
-    
+
     assert response.status_code == 200
     # Testuser aus conftest sollte in der Liste sein
     assert b"testuser" in response.data
