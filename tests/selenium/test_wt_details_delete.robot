@@ -15,6 +15,12 @@ ${WT_DATE}            2025-01-15
 *** Test Cases ***
 Test WT Details And Delete
     [Documentation]    Testet das Anlegen eines WT, Anzeigen der Details und Löschen.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    - A link to /wts/create_wt must be visible on the index page for admin users
     # 1. Login und neuen WT anlegen
     Login With Admin User
     Click Link    xpath://a[@href='/wts/create_wt']
@@ -43,6 +49,12 @@ Test WT Details And Delete
 
 *** Keywords ***
 Login With Admin User
+    [Documentation]    Öffnet den Browser, meldet sich mit Admin-Credentials an und hält die Session offen.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
     Input Text      name:username    ${USERNAME}

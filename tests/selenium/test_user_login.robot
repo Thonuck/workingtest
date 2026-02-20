@@ -12,6 +12,11 @@ ${PASSWORD}    admin
 *** Test Cases ***
 Test User Login
     [Documentation]    Testet den Login eines Benutzers.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Input Text      name:username    ${USERNAME}
     Input Text      name:password    ${PASSWORD}
@@ -21,6 +26,12 @@ Test User Login
 
 Test Create Competition
     [Documentation]    Testet die Erstellung eines neuen Wettbewerbs.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
+    ...    - Must run after Test User Login (depends on admin session state being clean)
     Competition Should not exist    Test Wettbewerb
     Create Competition    name=Test Wettbewerb    level=A    location=Testort    date=2024-12-01
     Open Browser    http://localhost:5000/    ${BROWSER}
@@ -29,6 +40,12 @@ Test Create Competition
 
 *** Keywords ***
 Login With Admin User
+    [Documentation]    Öffnet den Browser, meldet sich mit Admin-Credentials an und hält die Session offen.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Input Text      name:username    ${USERNAME}
     Input Text      name:password    ${PASSWORD}
@@ -37,7 +54,11 @@ Login With Admin User
 
 Competition Should not exist
     [Arguments]    ${name}
-    [Documentation]    Überprüft, dass kein Wettbewerb mit dem angegebenen Namen und Level existiert.
+    [Documentation]    Überprüft, dass kein Wettbewerb mit dem angegebenen Namen auf der Index-Seite existiert.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Open Browser    http://localhost:5000/    ${BROWSER}
     Set Window Size    1920    1080
     Page Should Not Contain    ${name}
@@ -46,6 +67,11 @@ Competition Should not exist
 Create Competition
     [Arguments]    ${name}    ${level}    ${location}    ${date}
     [Documentation]    Erstellt einen neuen Wettbewerb mit den angegebenen Details.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Login With Admin User
     Click Link    xpath://a[@href='/wts/create_wt']
     Input Text    name:name        ${name}
