@@ -40,10 +40,12 @@ Index Page Displays Competition Details
 Index Page Empty State
     [Documentation]    Testet die leere Tabelle, wenn keine Wettbewerbe existieren.
     # Reset database to empty state
+    ${project_dir}=    Get Environment Variable    PROJECT_DIR    /home/runner/work/workingtest/workingtest
+    Set Suite Variable    ${PROJECT_DIR}    ${project_dir}
     Run Process    pkill    -9    -f    python run.py
     Sleep    1s
-    Run Process    rm    -f    /home/thomas/development/workingtest/instance/database.db
-    Run Process    bash    -c    cd /home/thomas/development/workingtest && source .venv/bin/activate && echo "ja" | python reset_database.py    shell=True
+    Run Process    rm    -f    ${PROJECT_DIR}/instance/database.db
+    Run Process    bash    -c    cd ${PROJECT_DIR} && echo "ja" | python reset_database.py    shell=True
     Start Web App
     Sleep    2s
     
@@ -141,5 +143,5 @@ Login With Admin User
 
 Start Web App
     [Documentation]    Startet die Webanwendung.
-    Start Process    python    run.py    cwd=/home/thomas/development/workingtest    env:PYTHONUNBUFFERED=1
+    Start Process    python    run.py    cwd=${PROJECT_DIR}    env:PYTHONUNBUFFERED=1
     Sleep    5s
