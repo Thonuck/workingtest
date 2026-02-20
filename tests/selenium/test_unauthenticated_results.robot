@@ -9,6 +9,11 @@ ${BROWSER}            headlesschrome
 *** Test Cases ***
 Test Unauthenticated User Can View Unpublished Results Page
     [Documentation]    Testet, dass nicht eingeloggte Benutzer die Results-Seite sehen können und "No results available yet" angezeigt wird, wenn keine Daten vorhanden sind.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
+    ...    - A competition with ID=1 must exist (created by test_user_login.robot; run that suite first)
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     Open Browser    ${INDEX_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
     
@@ -28,6 +33,12 @@ Test Unauthenticated User Can View Unpublished Results Page
 
 Test Authenticated Admin Can Manage Results
     [Documentation]    Testet, dass ein Admin-Benutzer die Results-Seite mit Publish/Unpublish-Buttons sehen kann.
+    ...
+    ...    Execution requirements:
+    ...    - Flask web app must be running at http://localhost:5000 (started by __init__.robot suite setup)
+    ...    - Admin user (username: admin, password: admin) must exist in the database
+    ...    - A competition with ID=1 must exist (created by test_user_login.robot; run that suite first)
+    ...    - Chrome/Chromium and ChromeDriver must be installed for headlesschrome
     # Login as admin
     Open Browser    ${LOGIN_PAGE}    ${BROWSER}
     Set Window Size    1920    1080
