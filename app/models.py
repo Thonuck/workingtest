@@ -50,6 +50,7 @@ class Dog(db.Model):
 # Starter model
 class Starter(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    starter_number: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
     person_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('person.id'), nullable=True)
     dog_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('dog.id'), nullable=True)
     competition_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('competition.id'), nullable=True)

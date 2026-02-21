@@ -22,11 +22,11 @@ def starters(competition_id):
     starters = [
         {
             'id': starter.id,
-            'number': str(idx + 1),
+            'number': starter.starter_number or 'unbekannt',
             'name': f"{starter.person.given_name} {starter.person.family_name}" if starter.person else 'unbekannt',
             'dog': starter.dog.name if starter.dog else 'unbekannt',
         }
-        for idx, starter in enumerate(starters_db)
+        for starter in starters_db
     ]
 
     table_data = {

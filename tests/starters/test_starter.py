@@ -95,7 +95,7 @@ def test_starters_route_uses_db(client, app):
         db.session.add_all([person, dog, competition])
         db.session.flush()
 
-        starter = Starter(person_id=person.id, dog_id=dog.id, competition_id=competition.id)
+        starter = Starter(person_id=person.id, dog_id=dog.id, competition_id=competition.id, starter_number='A1')
         db.session.add(starter)
         db.session.commit()
 
@@ -107,3 +107,4 @@ def test_starters_route_uses_db(client, app):
     assert response.status_code == 200
     assert b"Anna" in response.data
     assert b"Bello" in response.data
+    assert b"A1" in response.data
