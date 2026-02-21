@@ -57,10 +57,10 @@ class Starter(db.Model):
     present: Mapped[bool] = mapped_column(Boolean, default=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
-    # Relationships
-    person: Mapped[Optional[Person]] = relationship('Person', backref=db.backref('starters', lazy=True))
-    dog: Mapped[Optional[Dog]] = relationship('Dog', backref=db.backref('starters', lazy=True))
-    competition: Mapped[Optional[Competition]] = relationship('Competition', backref=db.backref('starters', lazy=True))
+    # Relationships — each relationship is backed by its corresponding FK column above
+    person: Mapped[Optional[Person]] = relationship('Person', foreign_keys=[person_id], backref=db.backref('starters', lazy=True))
+    dog: Mapped[Optional[Dog]] = relationship('Dog', foreign_keys=[dog_id], backref=db.backref('starters', lazy=True))
+    competition: Mapped[Optional[Competition]] = relationship('Competition', foreign_keys=[competition_id], backref=db.backref('starters', lazy=True))
 
 
 # Exercise model
