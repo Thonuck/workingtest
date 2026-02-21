@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy import select
 
 from app import db
-from app.models import Competition, Dog, Person, Starter
+from app.models import Competition, Dog, Person, Starter, User
 
 
 def test_create_starter_with_all_relations(app):
@@ -79,3 +79,31 @@ def test_query_starters_by_competition(app):
         assert len(results) == 3
         paid_starters = [s for s in results if s.paid]
         assert len(paid_starters) == 2
+
+
+def test_starters_route_uses_db(client, app):
+    """Test that the starters route queries starters from the DB, not a static dict."""
+    with app.app_context():
+        # Create an admin/coach user
+        coach = User(username="coach_test", role="coach")
+        coach.set_password("coachpass")
+        db.session.add(coach)
+
+        person = Person(given_name="Anna", family_name="Müller")
+        dog = Dog(name="Bello", breed="Husky")
+        competition = Competition(name="Test WT", level="A", location="Berlin", date=date(2025, 6, 1))
+        db.session.add_all([person, dog, competition])
+        db.session.flush()
+
+        starter = Starter(person_id=person.id, dog_id=dog.id, competition_id=competition.id)
+        db.session.add(starter)
+        db.session.commit()
+
+        competition_id = competition.id
+
+    client.post("/users/login", data={"username": "coach_test", "password": "coachpass"})
+    response = client.get(f"/exercises/starters/{competition_id}")
+
+    assert response.status_code == 200
+    assert b"Anna" in response.data
+    assert b"Bello" in response.data
