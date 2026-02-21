@@ -47,21 +47,12 @@ class Dog(db.Model):
     kennel: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
 
-class WtStarter(db.Model):
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    starter_nummer: Mapped[str] = mapped_column(String(5), nullable=False)
-    vorname: Mapped[str] = mapped_column(String(100), nullable=False)
-    nachname: Mapped[str] = mapped_column(String(100), nullable=False)
-    hundename: Mapped[str] = mapped_column(String(100), nullable=False)
-    rasse: Mapped[str] = mapped_column(String(100), nullable=False)
-
-
 # Starter model
 class Starter(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    person_id: Mapped[int] = mapped_column(Integer, ForeignKey('person.id'), nullable=False)
-    dog_id: Mapped[int] = mapped_column(Integer, ForeignKey('dog.id'), nullable=False)
-    competition_id: Mapped[int] = mapped_column(Integer, ForeignKey('competition.id'), nullable=False)
+    person_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('person.id'), nullable=True)
+    dog_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('dog.id'), nullable=True)
+    competition_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('competition.id'), nullable=True)
     paid: Mapped[bool] = mapped_column(Boolean, default=False)
     present: Mapped[bool] = mapped_column(Boolean, default=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
