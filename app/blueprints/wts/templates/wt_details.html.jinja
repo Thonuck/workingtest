@@ -12,16 +12,25 @@
         </ul>   
     </div>
 
-    <div class="d-flex gap-2 align-items-center mt-5">
-
-        <a href="{{ url_for('exercises.wt_exercises', competition_id=competition.id) }}" class="btn btn-secondary">Aufgaben</a>
-        <a href="{{ url_for('starters.starters', competition_id=competition.id) }}" class="btn btn-secondary">Starterliste</a>
-
-        <form action="{{ url_for('wts.delete_wt', competition_id=competition.id) }}" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Workingtest löschen möchten?');" class="m-0">
-            <button type="submit" class="btn btn-danger">Löschen</button>
-        </form>
-
-        <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Zurück</a>
+    <div class="mt-5">
+        <div class="row mb-2">
+            <div class="col-6">
+                <a href="{{ url_for('exercises.wt_exercises', competition_id=competition.id) }}" class="btn btn-secondary w-100">Aufgaben</a>
+            </div>
+            <div class="col-6">
+                <a href="{{ url_for('starters.starters', competition_id=competition.id) }}" class="btn btn-secondary w-100">Starterliste</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <form action="{{ url_for('wts.delete_wt', competition_id=competition.id) }}" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Workingtest löschen möchten?');" class="m-0">
+                    <button type="submit" class="btn btn-danger w-100">Löschen</button>
+                </form>
+            </div>
+            <div class="col-6">
+                <a href="{{ url_for('main.index') }}" class="btn btn-secondary w-100">Zurück</a>
+            </div>
+        </div>
     </div>
 {% endcall %}
 
