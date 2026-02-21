@@ -13,7 +13,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(150), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(512), nullable=False)
     role: Mapped[str] = mapped_column(String(50), nullable=False, default='guest')
 
     def set_password(self, password):
