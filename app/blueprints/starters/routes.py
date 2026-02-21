@@ -7,6 +7,7 @@ from app.models import (
     ExerciseResult, Starter, CompetitionResult
 )
 from app.decorators import roles_required
+from sqlalchemy.orm import joinedload
 
 
 # ==================== WT STARTER PAGE ====================
@@ -14,28 +15,27 @@ from app.decorators import roles_required
 @login_required
 @roles_required(['admin', 'coach'])
 def starters(competition_id):
-    # competition = Competition.query.get_or_404(competition_id)
-    # exercises = Exercise.query.filter_by(competition_id=competition_id).all()
-    # starters = Starter.query.filter_by(competition_id=competition_id).all()
-    starters = [{
-        'id': 1,
-        'number': "A1",
-        'name': 'Starter 1',
-        'dog': 'Dog Name 1'
-    }, {
-        'id': 2,
-        'number': "A2",
-        'name': 'Starter 2',
-        'dog': 'Dog Name 2'
-    }]
-    
+    competition = Competition.query.get_or_404(competition_id)
+    starters_db = Starter.query.filter_by(competition_id=competition_id).options(
+        joinedload(Starter.person), joinedload(Starter.dog)
+    ).all()
+    starters = [
+        {
+            'id': s.id,
+            'number': str(i + 1),
+            'name': f"{s.person.given_name} {s.person.family_name}" if s.person else '',
+            'dog': s.dog.name if s.dog else '',
+        }
+        for i, s in enumerate(starters_db)
+    ]
+
     table_data = {
         'title': "Starterliste",
         'headers': [('number', 'Startnummer'), ('name', 'Starter Name'), ('dog', 'Hund')],
         'items': starters,
         'competition_id': competition_id,
         'details_route': 'wts.wt_details'}
-    
+
     return render_template('index.html.jinja', table_data=table_data)
 
 
