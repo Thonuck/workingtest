@@ -33,11 +33,16 @@
     <hr>
 
     {% if starter_results %}
-        {% call data_table(['Ranking', 'Starter'] + [exercise.name for exercise in exercises] + ['Total Points']) %}
-            {% set sorted_results = starter_results|dictsort(attribute='1.total_points', reverse=true) %}
-            {% for idx, (starter_id, result) in enumerate(sorted_results, 1) %}
+        {% set ns = namespace(headers=['Ranking', 'Starter']) %}
+        {% for exercise in exercises %}
+            {% set ns.headers = ns.headers + [exercise.name] %}
+        {% endfor %}
+        {% set ns.headers = ns.headers + ['Total Points'] %}
+        {% call data_table(ns.headers) %}
+            {% set sorted_results = starter_results.values() | sort(attribute='total_points', reverse=true) %}
+            {% for result in sorted_results %}
             <tr>
-                <td class="fw-bold">{{ ranking_badge(idx) }}</td>
+                <td class="fw-bold">{{ ranking_badge(loop.index) }}</td>
                 <td>
                     <strong>
                         {% if result.starter.person %}
