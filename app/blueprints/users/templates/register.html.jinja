@@ -1,13 +1,17 @@
 {% extends "base.html.jinja" %}
-{% from "macros.html.jinja" import form_card, form_input %}
+{% from "generic_details.html.jinja" import generic_details %}
 
 {% block content %}
-{% call form_card('Neuen Benutzer registrieren') %}
-    <form method="POST">
-        {{ form_input('username', placeholder='Benutzername', required=true) }}
-        {{ form_input('password', type='password', placeholder='Passwort', required=true) }}
-        <button type="submit" class="btn btn-primary">Registrieren</button>
-        <a href="{{ url_for('users.login') }}" class="btn btn-link">Zurück zum Login</a>
-    </form>
-{% endcall %}
+{% set register_data = {
+    "title": "Neuen Benutzer registrieren",
+    "fields": [
+        {"name": "username", "label": "Benutzername", "value": "", "type": "text",     "placeholder": "Benutzername", "required": true},
+        {"name": "password", "label": "Passwort",     "value": "", "type": "password", "placeholder": "Passwort",     "required": true}
+    ],
+    "buttons": [
+        {"type": "submit", "label": "Registrieren",     "style": "primary"},
+        {"type": "link",   "label": "Zurück zum Login", "url": url_for('users.login'), "style": "link"}
+    ]
+} %}
+{{ generic_details(register_data, edit=true) }}
 {% endblock %}

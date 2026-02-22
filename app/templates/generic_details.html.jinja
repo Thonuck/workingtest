@@ -1,0 +1,237 @@
+{#   GENERIC DETAILS / EDIT TEMPLATE                                          #}
+{#                                                                              #}
+{# PUBLIC ENTRY POINT:                                                          #}
+{#   generic_details(data, edit=false, show_flash=true)                        #}
+{#                                                                              #}
+{# data = {                                                                     #}
+{#   "title": "...",           (optional) card heading                         #}
+{#   "form_action": "...",     (optional) form action URL for edit mode        #}
+{#   "fields": [                                                                #}
+{#     {                                                                        #}
+{#       "name":        "...",   form field name / detail key                  #}
+{#       "label":       "...",   human-readable label                          #}
+{#       "value":       "...",   current value                                 #}
+{#       "type":        "text|password|email|number|date|select|textarea",     #}
+{#       "options":     [["value", "Display Text"], ...],  (select only)       #}
+{#       "required":    false,   (optional)                                    #}
+{#       "placeholder": ""       (optional)                                    #}
+{#     }, ...                                                                   #}
+{#   ],                                                                         #}
+{#   "buttons": [                                                               #}
+{#     {                                                                        #}
+{#       "type":    "link|submit|form",                                         #}
+{#       "label":   "...",                                                      #}
+{#       "url":     "...",    (link and form types)                             #}
+{#       "style":   "primary|secondary|danger|...",  (Bootstrap btn style)     #}
+{#       "confirm": "..."     (optional, form type only - confirmation dialog) #}
+{#     }, ...                                                                   #}
+{#   ]                                                                          #}
+{# }                                                                            #}
+{#                                                                              #}
+{# edit=false  -> read-only detail view (dl list + action buttons)             #}
+{# edit=true   -> editable form view with current values pre-filled            #}
+{#                                                                              #}
+{# Notes:                                                                       #}
+{#   - "textarea" fields render their value between <textarea> tags (not via   #}
+{#     a value= attribute), which correctly handles newlines and HTML entities. #}
+{#   - "date" fields use the HTML5 native date picker. When value is empty,    #}
+{#     the data-default-today attribute is set and a single DOMContentLoaded   #}
+{#     script (injected by _edit_form) defaults those inputs to today.         #}
+{#     In read-only mode the date is displayed as plain text.                  #}
+{#   - Button type "form" (standalone POST form with optional confirm dialog)  #}
+{#     is only rendered in read-only mode (edit=false). In edit mode the       #}
+{#     outer <form> already handles POST; use type "submit" there instead.     #}
+{#   - Internal sub-macros are prefixed with _ and not intended for direct use #}
+
+
+{# -- Sub-macro: card header ------------------------------------------------- #}
+{% macro _details_header(title) %}
+{% if title %}
+<h1 class="card-title">{{ title }}</h1>
+{% endif %}
+{% endmacro %}
+
+
+{# -- Sub-macro: flash messages ---------------------------------------------- #}
+{% macro _flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+
+{# -- Sub-macro: select input field ------------------------------------------ #}
+{% macro _select_field(field) %}
+<div class="form-group mb-3">
+    <label>{{ field.label }}</label>
+    <select name="{{ field.name }}" class="form-control"
+            {% if field.required %}required{% endif %}>
+        {% for opt_value, opt_text in field.options %}
+        <option value="{{ opt_value }}"
+            {% if opt_value == field.value %}selected{% endif %}>
+            {{ opt_text }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: textarea input field ---------------------------------------- #}
+{# Note: value goes between tags (not in value= attr) to handle newlines.      #}
+{% macro _textarea_field(field) %}
+<div class="form-group mb-3">
+    {% if field.label %}<label>{{ field.label }}</label>{% endif %}
+    <textarea name="{{ field.name }}" class="form-control"
+              {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+              {% if field.required %}required{% endif %}>{{ field.value|default('') }}</textarea>
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: date input field with native date picker -------------------- #}
+{# Empty fields get data-default-today; _edit_form injects a single script    #}
+{# to default them all to today via DOMContentLoaded. Read-only: plain text.  #}
+{% macro _date_field(field) %}
+<div class="form-group mb-3">
+    {% if field.label %}<label for="{{ field.name }}">{{ field.label }}</label>{% endif %}
+    <input type="date" name="{{ field.name }}" id="{{ field.name }}"
+           class="form-control"
+           value="{{ field.value|default('') }}"
+           {% if not field.value %}data-default-today="true"{% endif %}
+           {% if field.required %}required{% endif %}>
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: initialise empty date fields to today (called once per form) #}
+{# Uses DOMContentLoaded to guarantee DOM availability.                        #}
+{% macro _date_init_script() %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("input[data-default-today]").forEach(function(el) {
+        if (!el.value) { el.valueAsDate = new Date(); }
+    });
+});
+</script>
+{% endmacro %}
+
+
+{# -- Sub-macro: generic text/password/email/number input field -------------- #}
+{% macro _input_field(field) %}
+<div class="form-group mb-3">
+    {% if field.label %}<label>{{ field.label }}</label>{% endif %}
+    <input type="{{ field.type|default('text') }}" name="{{ field.name }}"
+           class="form-control"
+           {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+           {% if field.value %}value="{{ field.value }}"{% endif %}
+           {% if field.required %}required{% endif %}>
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: dispatch a single field to the correct sub-macro ------------ #}
+{% macro _form_field(field) %}
+{% if field.type == 'select' %}
+    {{ _select_field(field) }}
+{% elif field.type == 'textarea' %}
+    {{ _textarea_field(field) }}
+{% elif field.type == 'date' %}
+    {{ _date_field(field) }}
+{% else %}
+    {{ _input_field(field) }}
+{% endif %}
+{% endmacro %}
+
+
+{# -- Sub-macro: button bar for edit / new form (submit + link types) -------- #}
+{% macro _edit_buttons(buttons) %}
+<div class="d-flex gap-2 mt-3">
+    {% for btn in buttons %}
+        {% if btn.type == 'submit' %}
+        <button type="submit" class="btn btn-{{ btn.style|default('primary') }}">
+            {{ btn.label }}
+        </button>
+        {% elif btn.type == 'link' %}
+        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('secondary') }}">
+            {{ btn.label }}
+        </a>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: button bar for read-only detail view (link + form types) ---- #}
+{# "form" type wraps a standalone POST form with an optional confirm dialog.   #}
+{% macro _detail_buttons(buttons) %}
+<div class="d-flex gap-2 mt-3">
+    {% for btn in buttons %}
+        {% if btn.type == 'link' %}
+        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('info') }}">
+            {{ btn.label }}
+        </a>
+        {% elif btn.type == 'form' %}
+        <form method="POST" action="{{ btn.url }}" style="display:inline;"
+              {% if btn.confirm %}onsubmit="return confirm('{{ btn.confirm }}');"{% endif %}>
+            <button type="submit" class="btn btn-{{ btn.style|default('danger') }}">
+                {{ btn.label }}
+            </button>
+        </form>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+
+{# -- Sub-macro: editable form (all fields + edit buttons) ------------------- #}
+{# Injects the date-default script once if any date field is present.          #}
+{% macro _edit_form(data) %}
+<form method="POST" {% if data.form_action %}action="{{ data.form_action }}"{% endif %}>
+    {% for field in data.fields %}
+        {{ _form_field(field) }}
+    {% endfor %}
+    {{ _edit_buttons(data.buttons) }}
+</form>
+{% if data.fields | selectattr('type', 'equalto', 'date') | list %}
+{{ _date_init_script() }}
+{% endif %}
+{% endmacro %}
+
+
+{# -- Sub-macro: read-only detail list --------------------------------------- #}
+{% macro _detail_view(data) %}
+<dl>
+    {% for field in data.fields %}
+    <dt>{{ field.label }}</dt>
+    <dd>{{ field.value }}</dd>
+    {% endfor %}
+</dl>
+{{ _detail_buttons(data.buttons) }}
+{% endmacro %}
+
+
+{# =========================================================================== #}
+{# PUBLIC MACRO                                                                 #}
+{# =========================================================================== #}
+{% macro generic_details(data, edit=false, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+        <div class="card">
+            <div class="card-body">
+                {{ _details_header(data.title) }}
+                {% if show_flash %}{{ _flash_messages() }}{% endif %}
+                {% if edit %}
+                    {{ _edit_form(data) }}
+                {% else %}
+                    {{ _detail_view(data) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}

@@ -1,14 +1,20 @@
 {% extends "base.html.jinja" %}
-{% from "macros.html.jinja" import form_card, form_input, form_select %}
+{% from "generic_details.html.jinja" import generic_details %}
 
 {% block content %}
-{% call form_card('Benutzer bearbeiten', show_flash=false) %}
-    <form method="POST">
-        {{ form_input('username', label='Benutzername', value=user.username, required=true) }}
-        {{ form_select('role', 'Rolle', [('guest', 'Guest'), ('helper', 'Helper'), ('organizer', 'Organizer'), ('admin', 'Admin')], selected=user.role, required=true) }}
-        {{ form_input('password', label='Neues Passwort (optional)', type='password', placeholder='Neues Passwort') }}
-        <button type="submit" class="btn btn-primary">Speichern</button>
-        <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Abbrechen</a>
-    </form>
-{% endcall %}
+{% set edit_data = {
+    "title": "Benutzer bearbeiten",
+    "fields": [
+        {"name": "username", "label": "Benutzername",               "value": user.username, "type": "text",     "required": true},
+        {"name": "role",     "label": "Rolle",                       "value": user.role,     "type": "select",
+         "options": [["guest", "Guest"], ["helper", "Helper"], ["organizer", "Organizer"], ["admin", "Admin"]],
+         "required": true},
+        {"name": "password", "label": "Neues Passwort (optional)",  "value": "",            "type": "password", "placeholder": "Neues Passwort"}
+    ],
+    "buttons": [
+        {"type": "submit", "label": "Speichern",  "style": "primary"},
+        {"type": "link",   "label": "Abbrechen",  "url": url_for('users.list_users'), "style": "secondary"}
+    ]
+} %}
+{{ generic_details(edit_data, edit=true) }}
 {% endblock %}

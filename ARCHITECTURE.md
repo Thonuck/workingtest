@@ -455,6 +455,58 @@ sequenceDiagram
 
 ## Template Macro Architecture
 
+### Generic Details Macro (`generic_details.html.jinja`)
+
+A new generic template file provides a single `generic_details` macro that replaces separate
+detail/edit/new user templates with a unified approach:
+
+```
+app/templates/generic_details.html.jinja
+```
+
+**Macro signature**: `generic_details(data, edit=false, show_flash=true)`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `data` | dict/JSON | Structure describing fields and buttons (see below) |
+| `edit` | bool | `false` = read-only detail view; `true` = editable form view |
+| `show_flash` | bool | Whether to show Flask flash messages (default `true`) |
+
+**`data` JSON structure**:
+```json
+{
+  "title": "...",
+  "form_action": "...",
+  "fields": [
+    {
+      "name": "...",
+      "label": "...",
+      "value": "...",
+      "type": "text|password|email|number|select|textarea",
+      "options": [["value", "Display Text"]],
+      "required": false,
+      "placeholder": ""
+    }
+  ],
+  "buttons": [
+    {
+      "type": "link|submit|form",
+      "label": "...",
+      "url": "...",
+      "style": "primary|secondary|danger|...",
+      "confirm": "..."
+    }
+  ]
+}
+```
+
+**Usage in user templates**:
+- `detail.html.jinja` – calls `generic_details(data)` (edit=false for read-only view)
+- `edit.html.jinja` – calls `generic_details(data, edit=true)` for editable form
+- `register.html.jinja` – calls `generic_details(data, edit=true)` for new user form
+
+The macro is fully generic and can be used for any entity type by supplying the appropriate `data` structure.
+
 ### Macro Organization
 
 ```mermaid
@@ -886,7 +938,7 @@ tests/selenium/
 | About | `/about` | test_main_pages.robot | TODO | - |
 | Login | `/users/login` | test_user_login.robot | ✅ DONE | 2 |
 | Register | `/users/register` | test_user_registration.robot | TODO | - |
-| User Management | `/users/*` | test_user_management.robot | TODO | - |
+| User Management | `/users/*` | test_user_management.robot | ✅ DONE | 4 |
 | WT Details | `/wts/details/<id>` | test_wt_details_delete.robot | ✅ DONE | 2 |
 | Create WT | `/wts/create_wt` | test_wt_details_delete.robot | ✅ DONE | - |
 | Exercises | `/exercises/wt/<id>` | test_exercises_management.robot | TODO | - |
