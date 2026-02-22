@@ -1,18 +1,21 @@
 {% extends "base.html.jinja" %}
+{% from "generic_details.html.jinja" import generic_details %}
 
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ user.username }}</h1>
-    <p>ID: {{ user.id }}</p>
-    
-    <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>
-    
-    <form method="POST" action="{{ url_for('users.delete_user', user_id=user.id) }}" style="display:inline;">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-    </form>
-    
-    <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Back</a>
-</div>
+{% set detail_data = {
+    "title": user.username,
+    "fields": [
+        {"name": "id",       "label": "ID",          "value": user.id|string, "type": "text"},
+        {"name": "username", "label": "Benutzername", "value": user.username,  "type": "text"},
+        {"name": "role",     "label": "Rolle",        "value": user.role,      "type": "text"}
+    ],
+    "buttons": [
+        {"type": "link", "label": "Edit",   "url": url_for('users.edit_user',  user_id=user.id), "style": "primary"},
+        {"type": "form", "label": "Delete", "url": url_for('users.delete_user', user_id=user.id), "style": "danger", "confirm": "Are you sure?"},
+        {"type": "link", "label": "Back",   "url": url_for('users.list_users'), "style": "secondary"}
+    ]
+} %}
+{{ generic_details(detail_data) }}
 {% endblock %}
