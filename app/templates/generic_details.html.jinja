@@ -1,6 +1,7 @@
 {#   GENERIC DETAILS / EDIT TEMPLATE                                          #}
 {#                                                                              #}
-{# generic_details(data, edit=false, show_flash=true)                          #}
+{# PUBLIC ENTRY POINT:                                                          #}
+{#   generic_details(data, edit=false, show_flash=true)                        #}
 {#                                                                              #}
 {# data = {                                                                     #}
 {#   "title": "...",           (optional) card heading                         #}
@@ -10,7 +11,7 @@
 {#       "name":        "...",   form field name / detail key                  #}
 {#       "label":       "...",   human-readable label                          #}
 {#       "value":       "...",   current value                                 #}
-{#       "type":        "text|password|email|number|select|textarea",          #}
+{#       "type":        "text|password|email|number|date|select|textarea",     #}
 {#       "options":     [["value", "Display Text"], ...],  (select only)       #}
 {#       "required":    false,   (optional)                                    #}
 {#       "placeholder": ""       (optional)                                    #}
@@ -27,7 +28,7 @@
 {#   ]                                                                          #}
 {# }                                                                            #}
 {#                                                                              #}
-{# edit=false  →  read-only detail view                                        #}
+{# edit=false  →  read-only detail view (dl list + action buttons)             #}
 {# edit=true   →  editable form view with current values pre-filled            #}
 {#                                                                              #}
 {# Notes:                                                                       #}
@@ -36,113 +37,161 @@
 {#   - Button type "form" (standalone POST form with optional confirm dialog)  #}
 {#     is only rendered in read-only mode (edit=false).  In edit mode the      #}
 {#     outer <form> already handles POST; use type "submit" there instead.     #}
+{#   - Internal sub-macros are prefixed with _ and not intended for direct use #}
 
 
+{# ── Sub-macro: card header ───────────────────────────────────────────────── #}
+{% macro _details_header(title) %}
+{% if title %}
+<h1 class="card-title">{{ title }}</h1>
+{% endif %}
+{% endmacro %}
+
+
+{# ── Sub-macro: flash messages ────────────────────────────────────────────── #}
+{% macro _flash_messages() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endmacro %}
+
+
+{# ── Sub-macro: select input field ───────────────────────────────────────── #}
+{% macro _select_field(field) %}
+<div class="form-group mb-3">
+    <label>{{ field.label }}</label>
+    <select name="{{ field.name }}" class="form-control"
+            {% if field.required %}required{% endif %}>
+        {% for opt_value, opt_text in field.options %}
+        <option value="{{ opt_value }}"
+            {% if opt_value == field.value %}selected{% endif %}>
+            {{ opt_text }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+
+{# ── Sub-macro: textarea input field ─────────────────────────────────────── #}
+{# Note: value goes between tags (not in value= attr) to handle newlines.     #}
+{% macro _textarea_field(field) %}
+<div class="form-group mb-3">
+    {% if field.label %}<label>{{ field.label }}</label>{% endif %}
+    <textarea name="{{ field.name }}" class="form-control"
+              {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+              {% if field.required %}required{% endif %}>{{ field.value|default('') }}</textarea>
+</div>
+{% endmacro %}
+
+
+{# ── Sub-macro: generic text/password/email/number/date input field ──────── #}
+{% macro _input_field(field) %}
+<div class="form-group mb-3">
+    {% if field.label %}<label>{{ field.label }}</label>{% endif %}
+    <input type="{{ field.type|default('text') }}" name="{{ field.name }}"
+           class="form-control"
+           {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+           {% if field.value %}value="{{ field.value }}"{% endif %}
+           {% if field.required %}required{% endif %}>
+</div>
+{% endmacro %}
+
+
+{# ── Sub-macro: dispatch a single field to the correct sub-macro ─────────── #}
+{% macro _form_field(field) %}
+{% if field.type == 'select' %}
+    {{ _select_field(field) }}
+{% elif field.type == 'textarea' %}
+    {{ _textarea_field(field) }}
+{% else %}
+    {{ _input_field(field) }}
+{% endif %}
+{% endmacro %}
+
+
+{# ── Sub-macro: button bar for edit / new form (submit + link types) ──────── #}
+{% macro _edit_buttons(buttons) %}
+<div class="d-flex gap-2 mt-3">
+    {% for btn in buttons %}
+        {% if btn.type == 'submit' %}
+        <button type="submit" class="btn btn-{{ btn.style|default('primary') }}">
+            {{ btn.label }}
+        </button>
+        {% elif btn.type == 'link' %}
+        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('secondary') }}">
+            {{ btn.label }}
+        </a>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+
+{# ── Sub-macro: button bar for read-only detail view (link + form types) ─── #}
+{# "form" type wraps a standalone POST form with an optional confirm dialog.  #}
+{% macro _detail_buttons(buttons) %}
+<div class="d-flex gap-2 mt-3">
+    {% for btn in buttons %}
+        {% if btn.type == 'link' %}
+        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('info') }}">
+            {{ btn.label }}
+        </a>
+        {% elif btn.type == 'form' %}
+        <form method="POST" action="{{ btn.url }}" style="display:inline;"
+              {% if btn.confirm %}onsubmit="return confirm('{{ btn.confirm }}');"{% endif %}>
+            <button type="submit" class="btn btn-{{ btn.style|default('danger') }}">
+                {{ btn.label }}
+            </button>
+        </form>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+
+{# ── Sub-macro: editable form (all fields + edit buttons) ────────────────── #}
+{% macro _edit_form(data) %}
+<form method="POST" {% if data.form_action %}action="{{ data.form_action }}"{% endif %}>
+    {% for field in data.fields %}
+        {{ _form_field(field) }}
+    {% endfor %}
+    {{ _edit_buttons(data.buttons) }}
+</form>
+{% endmacro %}
+
+
+{# ── Sub-macro: read-only detail list ────────────────────────────────────── #}
+{% macro _detail_view(data) %}
+<dl>
+    {% for field in data.fields %}
+    <dt>{{ field.label }}</dt>
+    <dd>{{ field.value }}</dd>
+    {% endfor %}
+</dl>
+{{ _detail_buttons(data.buttons) }}
+{% endmacro %}
+
+
+{# ════════════════════════════════════════════════════════════════════════════ #}
+{# PUBLIC MACRO                                                                 #}
+{# ════════════════════════════════════════════════════════════════════════════ #}
 {% macro generic_details(data, edit=false, show_flash=true) %}
 <div class="row mt-5">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
         <div class="card">
             <div class="card-body">
-
-                {% if data.title %}
-                <h1 class="card-title">{{ data.title }}</h1>
-                {% endif %}
-
-                {% if show_flash %}
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                      <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
-                {% endif %}
-
+                {{ _details_header(data.title) }}
+                {% if show_flash %}{{ _flash_messages() }}{% endif %}
                 {% if edit %}
-                {# ── Edit / New: render a form with pre-filled inputs ── #}
-                <form method="POST" {% if data.form_action %}action="{{ data.form_action }}"{% endif %}>
-                    {% for field in data.fields %}
-
-                        {% if field.type == 'select' %}
-                        <div class="form-group mb-3">
-                            <label>{{ field.label }}</label>
-                            <select name="{{ field.name }}" class="form-control"
-                                    {% if field.required %}required{% endif %}>
-                                {% for opt_value, opt_text in field.options %}
-                                <option value="{{ opt_value }}"
-                                    {% if opt_value == field.value %}selected{% endif %}>
-                                    {{ opt_text }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        {% elif field.type == 'textarea' %}
-                        <div class="form-group mb-3">
-                            {% if field.label %}<label>{{ field.label }}</label>{% endif %}
-                            <textarea name="{{ field.name }}" class="form-control"
-                                      {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
-                                      {% if field.required %}required{% endif %}>{{ field.value|default('') }}</textarea>
-                        </div>
-
-                        {% else %}
-                        <div class="form-group mb-3">
-                            {% if field.label %}<label>{{ field.label }}</label>{% endif %}
-                            <input
-                                type="{{ field.type|default('text') }}"
-                                name="{{ field.name }}"
-                                class="form-control"
-                                {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
-                                {% if field.value %}value="{{ field.value }}"{% endif %}
-                                {% if field.required %}required{% endif %}
-                            >
-                        </div>
-                        {% endif %}
-
-                    {% endfor %}
-
-                    <div class="d-flex gap-2 mt-3">
-                        {% for btn in data.buttons %}
-                            {% if btn.type == 'submit' %}
-                            <button type="submit" class="btn btn-{{ btn.style|default('primary') }}">
-                                {{ btn.label }}
-                            </button>
-                            {% elif btn.type == 'link' %}
-                            <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('secondary') }}">
-                                {{ btn.label }}
-                            </a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </form>
-
+                    {{ _edit_form(data) }}
                 {% else %}
-                {# ── Detail / Read-only: render field values as a definition list ── #}
-                <dl>
-                    {% for field in data.fields %}
-                    <dt>{{ field.label }}</dt>
-                    <dd>{{ field.value }}</dd>
-                    {% endfor %}
-                </dl>
-
-                <div class="d-flex gap-2 mt-3">
-                    {% for btn in data.buttons %}
-                        {% if btn.type == 'link' %}
-                        <a href="{{ btn.url }}" class="btn btn-{{ btn.style|default('info') }}">
-                            {{ btn.label }}
-                        </a>
-                        {% elif btn.type == 'form' %}
-                        <form method="POST" action="{{ btn.url }}" style="display:inline;"
-                              {% if btn.confirm %}onsubmit="return confirm('{{ btn.confirm }}');"{% endif %}>
-                            <button type="submit" class="btn btn-{{ btn.style|default('danger') }}">
-                                {{ btn.label }}
-                            </button>
-                        </form>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                    {{ _detail_view(data) }}
                 {% endif %}
-
             </div>
         </div>
     </div>
