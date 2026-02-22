@@ -1,3 +1,10 @@
+def test_login_page_get(client):
+    """Test GET /login renders the login form"""
+    response = client.get("/users/login")
+    assert response.status_code == 200
+    assert b"Login" in response.data
+
+
 def test_login_success(client):
     response = client.post(
         "/users/login",

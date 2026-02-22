@@ -938,7 +938,7 @@ tests/selenium/
 | About | `/about` | test_main_pages.robot | TODO | - |
 | Login | `/users/login` | test_user_login.robot | ✅ DONE | 2 |
 | Register | `/users/register` | test_user_registration.robot | TODO | - |
-| User Management | `/users/*` | test_user_management.robot | TODO | - |
+| User Management | `/users/*` | test_user_management.robot | ✅ DONE | 4 |
 | WT Details | `/wts/details/<id>` | test_wt_details_delete.robot | ✅ DONE | 2 |
 | Create WT | `/wts/create_wt` | test_wt_details_delete.robot | ✅ DONE | - |
 | Exercises | `/exercises/wt/<id>` | test_exercises_management.robot | TODO | - |
