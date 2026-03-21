@@ -4,6 +4,7 @@ from app.blueprints.users import bp
 from app import db
 from app.models import User
 from app.decorators import roles_required
+from typing import Any
 
 @bp.route('/set-role/<int:user_id>/<role>')
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -64,7 +65,18 @@ def dashboard():
 @roles_required(['admin', 'organizer'])
 def list_users():
     users = User.query.all()
-    return render_template('list.html.jinja', users=users)
+    items = [{'id': user.id, 'username': user.username, 'role': user.role} for user in users]
+
+    print(items)
+
+    table_data: dict[str, Any] = {
+        'title': "Benutzerverwaltung",
+        'headers': [('username', 'Benutzername'), ('role', 'Rolle')],
+        'items': items,
+        'details_route': 'users.detail'
+    }
+    
+    return render_template('user_list.html.jinja', table_data=table_data)
 
 @bp.route('/<int:user_id>/edit', methods=['GET', 'POST'])
 @roles_required(['admin', 'organizer'])  # Sowohl 'admin' als auch 'organizer' dürfen diese Route verwenden
@@ -87,7 +99,7 @@ def delete_user(user_id):
     db.session.commit()
     return redirect(url_for('users.list_users'))
 
-@bp.route('/<int:user_id>/detail')
-def detail(user_id):
-    user = User.query.get_or_404(user_id)
+@bp.route('/<int:id>/detail')
+def detail(id):
+    user = User.query.get_or_404(id)
     return render_template('detail.html.jinja', user=user)

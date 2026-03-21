@@ -1,0 +1,91 @@
+
+{# ============================================================================ #}
+{# FORM MACROS                                                                  #}
+{#------------------------------------------------------------------------------#}
+{# form_input                                                                   #}
+{# {'type': 'input', 'name': 'username', 'label': 'Benutzername', 'value': '',  #}
+{#  required=true}                                                              #}
+{#                                                                              #}
+{# form_select                                                                  #}
+{# {'type': 'select',                                                           #}   
+{#  'name': 'role',                                                             #}   
+{#  'label': 'Rolle',                                                           #} 
+{#  'value': [('name', 'Displayed Text', 'helper': 'Helfer'],                   #}  
+{#  'required'=true}                                                            #}
+{#                                                                              #}
+{# form_date                                                                    #}
+{# ============================================================================ #}
+
+{% macro form_card(title, elements, show_flash=true) %}
+<div class="row mt-5">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ title }}</h1>
+                
+                {% if show_flash %}
+                    {{ flash_messages() }}
+                {% endif %}
+                {{ caller() }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{#--------------------------------------------#}
+{# Form Input Field with Bootstrap 5 classes  #}
+{#--------------------------------------------#}
+{% macro input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='') %}
+    <div class="mb-3">
+        <label for="{{ name }}" class="form-label">{{ label }}{% if required %} *{% endif %}</label>
+        <input 
+            type="{{ type }}" 
+            class="form-control" 
+            id="{{ name }}"
+            name="{{ name }}" 
+            value="{{ value }}"
+            {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+            {% if required %}required{% endif %}
+            {% if min is not none %}min="{{ min }}"{% endif %}
+            {% if max is not none %}max="{{ max }}"{% endif %}
+        >
+    </div>
+{% endmacro %}
+
+
+{#--------------------------------------------#}
+{# Form Select Field with Bootstrap 5 classes #}
+{#--------------------------------------------#}
+{% macro select_field(name, label, options, selected='', required=false, empty_option='-- Select --') %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    <select class="form-select" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+        {% if empty_option %}
+        <option value="">{{ empty_option }}</option>
+        {% endif %}
+        {% for value, text in options %}
+            <option value="{{ value }}" {% if value == selected or value|string == selected|string %}selected{% endif %}>
+                {{ text }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+{% endmacro %}
+
+{#----------------------------------------------#}
+{# Form Textarea Field with Bootstrap 5 classes #}
+{#----------------------------------------------#}
+{% macro textarea_field(name, label, value='', placeholder='', required=false, rows=3) %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    <textarea 
+        class="form-control" 
+        id="{{ name }}"
+        name="{{ name }}"
+        rows="{{ rows }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+    >{{ value }}</textarea>
+</div>
+{% endmacro %}

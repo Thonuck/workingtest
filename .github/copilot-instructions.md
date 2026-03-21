@@ -1,3 +1,15 @@
+**General**
+run the tests first
+use red-green TDD
+
+**Python Unit Testing**
+
+The module under test shall be loaded with a fixture.
+All third party modules must be mocked.
+Use unittest.mock, don't use pytest monkeypatching.
+Use contextlib.ExistStack for multiple mocking and setting defaults.
+Avoid redundance.
+
 **Running Robot**
 
 Always run robot with -L TRACE and use outut.xml for further analysis.
