@@ -1,0 +1,92 @@
+
+{% macro wt_text_field(name, label, value="", placeholder="", required=false, edit=true) %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    {% if edit -%}
+	<input type="text"
+           class="form-control"
+           name="{{ name }}"
+           id="{{ name }}"
+           value="{{ value }}"
+           placeholder="{{ placeholder }}"
+           {% if required %}required{% endif -%}>
+    {%- else -%}
+    <p class="form-control-plaintext">{{ value }}</p>    
+    {%- endif %}
+</div>
+{% endmacro %}
+
+{% macro wt_date_field(name, label, value, edit=true, required=true) %}
+<div class="mb-3">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    {% if edit -%}
+	<input type="date"
+           class="form-control"
+           name="{{ name }}"
+           id="{{ name }}"
+           value="{{ value }}"
+           {% if required %}required{% endif %}>
+    {%- else -%}
+    <p class="form-control-plaintext">{{ value }}</p>    
+    {%- endif %}
+</div>
+{% endmacro %}
+
+{% macro wt_numeric_field(name, label, value, edit=true) %}
+<div class="mb-3>
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    {% if edit %}
+	<input type="number"
+           class="form-control"
+           name="{{ name }}"
+           id="{{ name }}"
+           value="{{ value }}"
+           {% if required %}required{% endif %}>
+    {% else %}
+    <p class="form-control-plaintext">{{ value }}</p>    
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro wt_select_field(name, label, options, value="", required=false, edit=true) %}
+<div class="mb-3>
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    {%- if edit %}
+    <select class="form-select"
+            name="{{ name }}"
+            id="{{ name }}"
+            {%- if required %}required{% endif %}>
+            <option value=""></option>
+            {%- for opt_value, opt_label in options %}
+            <option value="{{ opt_value }}"{% if opt_value==value %} selected{% endif %}>{{ opt_label }}</option>
+            {%- endfor %}
+    </select>
+    {%- else -%}
+        {%- for opt_value, opt_label in options %}
+            {%- if opt_value == value %}
+            <p class="form-control-plaintext">{{ opt_label }}</p>
+            {%- endif -%}
+        {%- endfor %}
+    {%- endif %}
+</div>
+{% endmacro %}
+
+{% macro wt_data_view(view_data) -%}
+    <form method="POST" action="">
+    {% for item in view_data.fields -%}
+        {% if item.type=="text" -%}
+            {{ wt_text_field(name=item.name, label=item.label, value=item.value, required=item.required, edit=view_data.edit) }}
+        {%- endif -%}
+        {%- if item.type=="date" -%}
+            {{ wt_date_field(name=item.name, label=item.label, value=item.value, required=item.required, edit=view_data.edit) }}
+        {%- endif -%}
+
+        {%- if item.type=="select" -%}
+            {{ wt_select_field(name=item.name, label=item.label, options=item.options, value=item.value, required=item.required, edit=view_data.edit) }}
+        {%- endif -%}
+    {% endfor -%}
+    {% if view_data.edit -%}
+        <button type="submit" class="btn btn-primary">Speichern</button>
+    {%- endif %}
+    </form>
+{% endmacro -%}
