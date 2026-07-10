@@ -1,4 +1,3 @@
-
 {# ============================================================================ #}
 {# FORM MACROS                                                                  #}
 {#------------------------------------------------------------------------------#}
@@ -7,48 +6,117 @@
 {#  required=true}                                                              #}
 {#                                                                              #}
 {# form_select                                                                  #}
-{# {'type': 'select',                                                           #}   
-{#  'name': 'role',                                                             #}   
-{#  'label': 'Rolle',                                                           #} 
-{#  'value': [('name', 'Displayed Text', 'helper': 'Helfer'],                   #}  
+{# {'type': 'select',                                                           #}
+{#  'name': 'role',                                                             #}
+{#  'label': 'Rolle',                                                           #}
+{#  'value': [('name', 'Displayed Text', 'helper': 'Helfer'],                   #}
 {#  'required'=true}                                                            #}
 {#                                                                              #}
 {# form_date                                                                    #}
 {# ============================================================================ #}
 
-{% macro form_card(title, elements, show_flash=true) %}
+
+{#--------------------------------------------#}
+{# Detail View Card                           #}
+{#--------------------------------------------#}
+{% macro detail_view_card(title, data) %}
+<div classe="row mt-5">
+    <div class="card-body">
+        <div class="card-body">
+            <ul class="list-goup list-group-flush">
+                {% for key, value in data.items() %}
+                <li class="list-group-item"><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div%
+    </div>
+</div>
+{% endmacro %}
+
+
+{#--------------------------------------------#}
+{# Link Button                                #}
+{#--------------------------------------------#}
+{% macro link_button(button_text, button_url_for) %}
+<div class="col-6">
+    <a href="{{ button_url_for }}" class="btn btn-secondary w-100">button_text</a>
+</div>
+{% endmacro %}
+
+
+{% macro delete_item_button(delete_url_for) %}
+<div class="col-6">
+    <form action="{{ delete_url_for }}" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Workingtest löschen möchten?');" class="m-0">
+        <button type="submit" class="btn btn-danger w-100">Löschen</button>
+    </form>
+</div>
+{% endmacro %}
+
+
+{#--------------------------------------------#}
+{# Botton Area                                #}
+{# TODO: Description, unvollstaendig, competition ID fehlt #}
+{# Im Moment sind hier links zu den           #}
+{# Aufgaben und zu den Ergebnissen            #}
+{#--------------------------------------------#}
+{% macro button_area(competition) %}
+    <div class="mt-5">
+        <div class="row mb-2">
+            link_button('Aufgaben', url_for('exercises.wt_exercises', competition_id=competition.id))
+            link_button('Ergebnisse', url_for('results.wt_results', competition_id=competition.id))
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <form action="{{ url_for('wts.delete_wt', competition_id=competition.id) }}" method="POST" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Workingtest löschen möchten?');" class="m-0">
+                    <button type="submit" class="btn btn-danger w-100">Löschen</button>
+                </form>
+            </div>
+            <div class="col-6">
+                <a href="{{ url_for('main.index') }}" class="btn btn-secondary w-100">Zurück</a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{#--------------------------------------------#}
+{# Flash messages card                        #}
+{#--------------------------------------------#}
+{# Shows messages for debugging               #}
+{#--------------------------------------------#}
+{% macro form_card(title, elements, show_flash=true) -%}
 <div class="row mt-5">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title">{{ title }}</h1>
-                
-                {% if show_flash %}
+                {% if show_flash -%}
                     {{ flash_messages() }}
-                {% endif %}
+                {% endif -%}
                 {{ caller() }}
             </div>
         </div>
     </div>
 </div>
-{% endmacro %}
+{% endmacro -%}
 
 {#--------------------------------------------#}
 {# Form Input Field with Bootstrap 5 classes  #}
+{# Result:                                    #}
+{# <label> <input>                            #}
 {#--------------------------------------------#}
-{% macro input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='') %}
+{% macro input_field(name, label, value='', type='text', required=false, min=none, max=none, placeholder='') -%}
     <div class="mb-3">
         <label for="{{ name }}" class="form-label">{{ label }}{% if required %} *{% endif %}</label>
-        <input 
-            type="{{ type }}" 
-            class="form-control" 
+        <input
+            type="{{ type }}"
+            class="form-control"
             id="{{ name }}"
-            name="{{ name }}" 
+            name="{{ name }}"
             value="{{ value }}"
-            {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
-            {% if required %}required{% endif %}
-            {% if min is not none %}min="{{ min }}"{% endif %}
-            {% if max is not none %}max="{{ max }}"{% endif %}
+            {% if placeholder %}placeholder="{{ placeholder }}"{% endif -%}
+            {% if required %}required{% endif -%}
+            {% if min is not none %}min="{{ min }}"{% endif -%}
+            {% if max is not none %}max="{{ max }}"{% endif -%}
         >
     </div>
 {% endmacro %}
@@ -57,18 +125,18 @@
 {#--------------------------------------------#}
 {# Form Select Field with Bootstrap 5 classes #}
 {#--------------------------------------------#}
-{% macro select_field(name, label, options, selected='', required=false, empty_option='-- Select --') %}
+{% macro select_field(name, label, options, selected='', required=false, empty_option='-- Select --') -%}
 <div class="mb-3">
     <label for="{{ name }}" class="form-label">{{ label }}</label>
-    <select class="form-select" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
-        {% if empty_option %}
+    <select class="form-select" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif -%}>
+        {% if empty_option -%}
         <option value="">{{ empty_option }}</option>
-        {% endif %}
-        {% for value, text in options %}
+        {% endif -%}
+        {% for value, text in options.items() -%}
             <option value="{{ value }}" {% if value == selected or value|string == selected|string %}selected{% endif %}>
-                {{ text }}
+                {{- text -}}
             </option>
-        {% endfor %}
+        {% endfor -%}
     </select>
 </div>
 {% endmacro %}
@@ -76,16 +144,16 @@
 {#----------------------------------------------#}
 {# Form Textarea Field with Bootstrap 5 classes #}
 {#----------------------------------------------#}
-{% macro textarea_field(name, label, value='', placeholder='', required=false, rows=3) %}
+{% macro textarea_field(name, label, value='', placeholder='', required=false, rows=3) -%}
 <div class="mb-3">
     <label for="{{ name }}" class="form-label">{{ label }}</label>
-    <textarea 
-        class="form-control" 
+    <textarea
+        class="form-control"
         id="{{ name }}"
         name="{{ name }}"
         rows="{{ rows }}"
-        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
-        {% if required %}required{% endif %}
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif -%}
+        {% if required %}required{% endif -%}
     >{{ value }}</textarea>
 </div>
-{% endmacro %}
+{% endmacro -%}

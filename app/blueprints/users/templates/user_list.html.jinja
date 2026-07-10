@@ -5,4 +5,14 @@
 
     {{ generic_table.generic_table(table_data=table_data) }}
 
+    {# we could create a special macro... but... #}
+    <div class="row">
+        <div class="col-6">
+            <a href="{{ url_for('users.register') }}" class="btn btn-primary w-100">Neu Anlegen</a>
+        </div>
+        <div class="col-6">
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary w-100">Zurück</a>
+        </div>
+    </div>
+
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html.jinja" %}
+{% from "macros.html.jinja" import form_card, form_input, form_select %}
+
+
+
+{#   {% macro form_select(name, label, options, selected='', required=false) %}  #}
+{% block content %}
+
+    {% call form_card('Neuer Starter', show_flash=false) %}
+        <form method="POST">
+            {% set breed_selection = [["Golden Retriever", "Golden Retriever"], ["Duck Tolling Retriever", "Duck Tolling Retriever"], ["Labrador Retriever", "Labrador Retriever"], ["Flatcoated Retriever", "Flatcoated Retriever"]] %}
+            {{ form_input('given_name', label='Vorname', placeholder='Vorname', required=true) }}
+            {{ form_input('family_name', label='Familienname', placeholder='Familienname', required=true) }}
+            {{ form_input('dog_name', label='Hunde Name', placeholder='Hunde Name', required=true) }}
+            {{ form_select(name='dog_breed', label='Hunde Rasse', options=breed_selection, selected='Golden Retriever', required=true) }}
+            {{ form_input('starter_number', label='Startnummer', placeholder='Startnummer', required=true) }}
+            <button type="submit" class="btn btn-primary">Starter hinzufuegen</button>
+            <a href="{{ url_for('starters.starters', competition_id=competition_id) }}" class="btn btn-secondary">Abbrechen</a>
+        </form>
+    {% endcall %}
+
+{% endblock %}

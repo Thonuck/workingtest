@@ -1,18 +1,34 @@
 {% extends "base.html.jinja" %}
 
+{% macro wt_card(title) %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {{ caller() }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ user.username }}</h1>
-    <p>ID: {{ user.id }}</p>
-    
-    <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>
-    
-    <form method="POST" action="{{ url_for('users.delete_user', user_id=user.id) }}" style="display:inline;">
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-    </form>
-    
-    <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Back</a>
-</div>
+    {% call wt_card("User Details") %}
+        <div class="container">
+            <h1>{{ user.username }}</h1>
+            <p>Password: ****</p>
+            <p>Rolle: {{ user.rolle }}</p>
+            <p>ID: {{ user.id }}</p>
+
+            <a href="{{ url_for('users.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>
+
+            <form method="POST" action="{{ url_for('users.delete_user', user_id=user.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+
+            <a href="{{ url_for('users.list_users') }}" class="btn btn-secondary">Back</a>
+        </div>
+    {% endcall %}
 {% endblock %}

@@ -1,10 +1,18 @@
 {% extends "base.html.jinja" %}
-{% import 'macros.html.jinja' as macros %}
+{% import 'generic_table.html.jinja' as generic_table %}
 
 {% block title %}Starter Liste{% endblock %}
 
 {% block content %}
 
     {{ generic_table.generic_table(table_data=table_data) }}
+    <div class="row">
+        <div class="col-6">
+            <a href="{{ url_for('starters.add_starter', competition_id=table_data.competition_id) }}" class="btn btn-primary w-100">Neuer Starter</a>
+        </div>
+        <div class="col-6">
+            <a href="{{ url_for('wts.wt_details', id=table_data.competition_id) }}" class="btn btn-secondary w-100">Zurück</a>
+        </div>
+    </div>
 
 {% endblock %}

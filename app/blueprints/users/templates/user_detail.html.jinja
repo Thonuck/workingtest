@@ -1,0 +1,9 @@
+    {% extends "base.html.jinja" %}
+    {% import 'generic_details.html.jinja' as generic_details %}
+
+    {% block content %}
+
+        {# {{ generic_details.generic_table(table_data=table_data) }} #}
+        {{ generic_details.generic_table(table_data=table_data) }}
+
+    {% endblock %}
