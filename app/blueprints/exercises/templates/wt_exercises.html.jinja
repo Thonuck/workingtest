@@ -1,81 +1,9 @@
 {% extends "base.html.jinja" %}
-{% from "macros.html.jinja" import page_header, data_table, action_buttons, empty_state %}
+{% import 'generic_table.html.jinja' as generic_table %}
 
 {% block title %}Exercises - {{ competition.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    {% call page_header(
-        competition.name + ' (' + competition.level + ') - Exercises',
-        level=competition.level,
-        location=competition.location,
-        date=competition.date
-    ) %}
-        {% if current_user.role in ['admin', 'organizer'] %}
-        <div class="d-flex gap-2 flex-wrap justify-content-end">
-            <a href="{{ url_for('exercises.add_exercise', competition_id=competition.id) }}" class="btn btn-primary">
-                + Add Exercise
-            </a>
-            <a href="{{ url_for('exercises.competition_results', competition_id=competition.id) }}" class="btn btn-info">
-                View Results
-            </a>
-        </div>
-        {% endif %}
-    {% endcall %}
 
-    <hr>
-
-    {% if exercises %}
-        {% call data_table(['Exercise Name', 'Max Points', 'Judge', 'Helper', 'Actions']) %}
-            {% for exercise in exercises %}
-            <tr>
-                <td><strong>{{ exercise.name }}</strong></td>
-                <td>{{ exercise.max_points }}</td>
-                <td>{{ exercise.judge.username if exercise.judge else '-' }}</td>
-                <td>{{ exercise.helper.username if exercise.helper else '-' }}</td>
-                <td>
-                    {% set buttons = [
-                        {
-                            'type': 'link',
-                            'url': url_for('exercises.exercise_point_entry', exercise_id=exercise.id),
-                            'label': '📝 Points',
-                            'style': 'info',
-                            'title': 'Enter Points'
-                        }
-                    ] %}
-                    {% if current_user.role in ['admin', 'organizer'] %}
-                        {% set _ = buttons.append({
-                            'type': 'link',
-                            'url': url_for('exercises.edit_exercise', exercise_id=exercise.id),
-                            'label': '✏️ Edit',
-                            'style': 'warning',
-                            'title': 'Edit'
-                        }) %}
-                        {% set _ = buttons.append({
-                            'type': 'submit',
-                            'url': url_for('exercises.delete_exercise', exercise_id=exercise.id),
-                            'label': '🗑️ Delete',
-                            'style': 'danger',
-                            'title': 'Delete',
-                            'confirm': 'Delete this exercise?'
-                        }) %}
-                    {% endif %}
-                    {{ action_buttons(buttons) }}
-                </td>
-            </tr>
-            {% endfor %}
-        {% endcall %}
-    {% else %}
-        {{ empty_state(
-            'No exercises yet.',
-            'Create your first exercise to get started.',
-            url_for('exercises.add_exercise', competition_id=competition.id) if current_user.role in ['admin', 'organizer'] else '',
-            'Add Exercise' if current_user.role in ['admin', 'organizer'] else ''
-        ) }}
-    {% endif %}
-
-    <div class="mt-4">
-        <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back to Overview</a>
-    </div>
-</div>
+{{ generic_table.generic_table(table_data=table_data) }}
 {% endblock %}
